@@ -770,21 +770,6 @@ describe("Websocket tests", () => {
     let adminX;
     let adminY;
 
-    // function waitForAndPopLatestMessage(messageArray) {
-    //     return new Promise(resolve => {
-    //         if (messageArray.length > 0) {
-    //             resolve(messageArray.shift())
-    //         } else {
-    //             let interval = setInterval(() => {
-    //                 if (messageArray.length > 0) {
-    //                     resolve(messageArray.shift())
-    //                     clearInterval(interval)
-    //                 }
-    //             }, 100)
-    //         }
-    //     })
-    // }
-
     function waitForAndPopLatestMessage(messageArray) {
         return new Promise((resolve, reject) => {
             let timeout = setTimeout(() => {
