@@ -5,10 +5,8 @@ import { AddElementSchema, CreateSpaceSchema, DeleteElementSchema } from "../../
 export const spaceRouter = Router();
 
 spaceRouter.post("/", userMiddleware, async (req, res) => {
-    console.log("endopibnt")
     const parsedData = CreateSpaceSchema.safeParse(req.body)
     if (!parsedData.success) {
-        console.log(JSON.stringify(parsedData))
         res.status(400).json({ message: "Validation failed" })
         return
     }
@@ -35,13 +33,10 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
             height: true
         }
     })
-    console.log("after")
     if (!map) {
         res.status(400).json({ message: "Map not found" })
         return
     }
-    console.log("map.mapElements.length")
-    console.log(map.mapElements.length)
     let space = await client.$transaction(async () => {
         const space = await client.space.create({
             data: {
@@ -64,13 +59,11 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
         return space;
 
     })
-    console.log("space crated")
     res.json({ spaceId: space.id })
 })
 
 
 spaceRouter.delete("/element", userMiddleware, async (req, res) => {
-    console.log("spaceElement?.space1 ")
     const parsedData = DeleteElementSchema.safeParse(req.body)
     if (!parsedData.success) {
         res.status(400).json({ message: "Validation failed" })
@@ -84,8 +77,6 @@ spaceRouter.delete("/element", userMiddleware, async (req, res) => {
             space: true
         }
     })
-    console.log(spaceElement?.space)
-    console.log("spaceElement?.space")
     if (!spaceElement?.space.creatorId || spaceElement.space.creatorId !== req.userId) {
         res.status(403).json({ message: "Unauthorized" })
         return
@@ -99,7 +90,6 @@ spaceRouter.delete("/element", userMiddleware, async (req, res) => {
 })
 
 spaceRouter.delete("/:spaceId", userMiddleware, async (req, res) => {
-    console.log("req.params.spaceId", req.params.spaceId)
     const space = await client.space.findUnique({
         where: {
             id: req.params.spaceId
@@ -113,7 +103,6 @@ spaceRouter.delete("/:spaceId", userMiddleware, async (req, res) => {
     }
 
     if (space.creatorId !== req.userId) {
-        console.log("code should reach here")
         res.status(403).json({ message: "Unauthorized" })
         return
     }

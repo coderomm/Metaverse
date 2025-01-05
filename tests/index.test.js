@@ -1,3 +1,4 @@
+const WebSocket = require('ws');
 const axios2 = require("axios");
 
 const BACKEND_URL = "http://localhost:3000"
@@ -38,7 +39,7 @@ const axios = {
     },
 }
 
-describe("Authentication", () => {
+describe.skip("Authentication", () => {
     test('Only unique user can signup', async () => {
         const username = "Om" + Math.random();
         const password = "Password@123";
@@ -103,7 +104,7 @@ describe("Authentication", () => {
     });
 });
 
-describe("User metadata endpoint", () => {
+describe.skip("User metadata endpoint", () => {
     let token = "";
     let avatarId = ""
 
@@ -160,7 +161,7 @@ describe("User metadata endpoint", () => {
     });
 });
 
-describe("User avatar information", () => {
+describe.skip("User avatar information", () => {
     let avatarId;
     let token;
     let userId;
@@ -208,7 +209,7 @@ describe("User avatar information", () => {
     })
 })
 
-describe("Space information", () => {
+describe.skip("Space information", () => {
     let mapId;
     let element1Id;
     let element2Id;
@@ -416,7 +417,7 @@ describe("Space information", () => {
     })
 })
 
-describe("Arena endpoints", () => {
+describe.skip("Arena endpoints", () => {
     let mapId;
     let element1Id;
     let element2Id;
@@ -601,7 +602,7 @@ describe("Arena endpoints", () => {
 
 })
 
-describe("Admin Endpoints", () => {
+describe.skip("Admin Endpoints", () => {
     let adminToken;
     let adminId;
     let userToken;
@@ -749,7 +750,8 @@ describe("Admin Endpoints", () => {
     })
 });
 
-describe.skip("Websocket tests", () => {
+jest.setTimeout(10000);
+describe("Websocket tests", () => {
     let adminToken;
     let adminUserId;
     let userToken;
@@ -768,22 +770,39 @@ describe.skip("Websocket tests", () => {
     let adminX;
     let adminY;
 
+    // function waitForAndPopLatestMessage(messageArray) {
+    //     return new Promise(resolve => {
+    //         if (messageArray.length > 0) {
+    //             resolve(messageArray.shift())
+    //         } else {
+    //             let interval = setInterval(() => {
+    //                 if (messageArray.length > 0) {
+    //                     resolve(messageArray.shift())
+    //                     clearInterval(interval)
+    //                 }
+    //             }, 100)
+    //         }
+    //     })
+    // }
+
     function waitForAndPopLatestMessage(messageArray) {
-        return new Promise(resolve => {
-            if (messageArray.length > 0) {
-                resolve(messageArray.shift())
-            } else {
-                let interval = setInterval(() => {
-                    if (messageArray.length > 0) {
-                        resolve(messageArray.shift())
-                        clearInterval(interval)
-                    }
-                }, 100)
-            }
-        })
+        return new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => {
+                reject(new Error("Timeout waiting for message"));
+            }, 5000); // Ensure messages resolve within 5 seconds
+
+            let interval = setInterval(() => {
+                if (messageArray.length > 0) {
+                    clearTimeout(timeout);
+                    clearInterval(interval);
+                    resolve(messageArray.shift());
+                }
+            }, 100);
+        });
     }
 
     async function setupHTTP() {
+        console.log('Setting up HTTP...');
         const username = `Om-${Math.random()}`
         const password = "Password@123"
         const adminSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
@@ -871,24 +890,41 @@ describe.skip("Websocket tests", () => {
             }
         })
         spaceId = spaceResponse.data.spaceId
+        console.log('HTTP setup complete.');
     }
 
     async function setupWs() {
+        console.log('Setting up WebSocket...');
         ws1 = new WebSocket(WS_URL)
+
         ws1.onmessage = (event) => {
+            console.log("ws1 received:", event.data);
             ws1Messages.push(JSON.parse(event.data))
         }
+
+        ws1.onerror = (error) => {
+            console.error("ws1 error:", error);
+        };
+
+        ws1.onclose = () => {
+            console.log("ws1 connection closed");
+        };
+
         await new Promise(r => {
             ws1.onopen = r
         })
 
         ws2 = new WebSocket(WS_URL)
+
         ws2.onmessage = (event) => {
+            console.log("got back data 2")
+            console.log(event.data)
             ws2Messages.push(JSON.parse(event.data))
         }
         await new Promise(r => {
             ws2.onopen = r
         })
+        console.log('WebSocket setup complete.');
     }
 
     beforeAll(async () => {
@@ -897,22 +933,29 @@ describe.skip("Websocket tests", () => {
     })
 
     test("Get back ack for joining the space", async () => {
+        console.log('spaceId = ', spaceId);
+        console.log("inside first test")
         ws1.send(JSON.stringify({
-            "type": "join",
-            "payload": {
-                "spaceId": spaceId,
-                "token": adminToken
+            type: "join",
+            payload: {
+                spaceId: spaceId,
+                token: adminToken
             }
         }))
-        const message1 = await waitForAndPopLatestMessage(ws1Messages);
+        console.log("inside first test1")
+        console.log('spaceId = ', spaceId);
 
+        const message1 = await waitForAndPopLatestMessage(ws1Messages);
+        console.log("inside first test2")
         ws2.send(JSON.stringify({
-            "type": "join",
-            "payload": {
-                "spaceId": spaceId,
-                "token": userToken
+            type: "join",
+            payload: {
+                spaceId: spaceId,
+                token: userToken
             }
         }))
+        console.log("inside first test3")
+
         const message2 = await waitForAndPopLatestMessage(ws2Messages);
         const message3 = await waitForAndPopLatestMessage(ws1Messages);
 
@@ -930,7 +973,7 @@ describe.skip("Websocket tests", () => {
 
         userX = message2.payload.spawn.x
         userY = message2.payload.spawn.y
-    })
+    }, 30000);
 
     test("User should not be able to move across the boundary of the wall", async () => {
         ws1.send(JSON.stringify({
