@@ -7,6 +7,7 @@ import { SignupPage } from './pages/auth/SignupPage';
 import { SpacesPage } from './pages/home/SpacesPage';
 import { PrivateRoute } from './routes/PrivateRoute';
 import { LandingPage } from './pages/LandingPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 export const App = () => (
   <Router>
@@ -20,6 +21,14 @@ export const App = () => (
             element={
               <PrivateRoute>
                 <SpacesPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
               </PrivateRoute>
             }
           />

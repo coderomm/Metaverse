@@ -12,7 +12,6 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
     }
 
     try {
-        console.log("JWT Secret in adminMiddleware:", process.env.JWT_SECRATE);
         const decoded = jwt.verify(token, process.env.JWT_SECRATE || 'JWT_SECRATE') as { role: string, userId: string }
         if (decoded.role !== "Admin") {
             res.status(403).json({ message: "Unauthorized" })

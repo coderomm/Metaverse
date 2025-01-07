@@ -2,7 +2,9 @@
 import { useState } from 'react';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { SignupInput, SignupSchema } from '../../types/auth';
+import { SignupInput, SignupSchema, User } from '../../types/auth';
+import { AxiosError } from 'axios';
+import { Link } from 'react-router-dom';
 
 export const SignupPage = () => {
   const { login } = useAuth();
@@ -22,15 +24,19 @@ export const SignupPage = () => {
     try {
       const validData = SignupSchema.parse(formData);
       await authApi.signup(validData);
-      
-      // Auto signin after successful signup
+
       const signinResponse = await authApi.signin({
         username: validData.username,
         password: validData.password
       });
-      login(signinResponse.data.token);
+
+      const userData: User = {
+        username: formData.username,
+        type: formData.type
+      }
+      login(signinResponse.data.token, userData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign up failed');
+      setError(err instanceof AxiosError ? err?.response?.data.message : err instanceof Error ? err.message : 'Sign up failed');
     } finally {
       setLoading(false);
     }
@@ -46,9 +52,9 @@ export const SignupPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
             <input
-              type="text"
+              type="email"
               required
-              placeholder="Username"
+              placeholder="Email"
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
@@ -84,6 +90,9 @@ export const SignupPage = () => {
             </button>
           </div>
         </form>
+        <div className="flex items-center justify-center text-center">Already have an account ?
+          <Link to="/signin" className="text-gray-700 hover:text-gray-900 ms-1">Sign In</Link>
+        </div>
       </div>
     </div>
   );

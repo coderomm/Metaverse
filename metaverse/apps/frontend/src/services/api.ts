@@ -2,9 +2,9 @@
 import axios, { AxiosError } from 'axios';
 import { SignupInput, SigninInput } from '../types/auth';
 
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'http://localhost:3000/api/v1';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',

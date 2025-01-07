@@ -12,7 +12,6 @@ export const userMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     try {
-        console.log("JWT Secret in userMiddleware:", process.env.JWT_SECRATE);
         const decoded = jwt.verify(token, process.env.JWT_SECRATE || 'JWT_SECRATE') as { role: string, userId: string }
         req.userId = decoded.userId
         next()

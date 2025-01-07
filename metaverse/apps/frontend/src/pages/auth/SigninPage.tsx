@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { SigninSchema, SigninInput } from '../../types/auth';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { AxiosError } from 'axios';
+import { Link } from 'react-router-dom';
 
 export const SigninPage = () => {
   const { login } = useAuth();
@@ -21,9 +23,9 @@ export const SigninPage = () => {
     try {
       const validData = SigninSchema.parse(formData);
       const response = await authApi.signin(validData);
-      login(response.data.token);
+      login(response.data.token, { username: formData.username });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed');
+      setError(err instanceof AxiosError ? err?.response?.data.message : err instanceof Error ? err.message : 'Sign in failed');
     } finally {
       setLoading(false);
     }
@@ -39,9 +41,9 @@ export const SigninPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
             <input
-              type="text"
+              type="email"
               required
-              placeholder="Username"
+              placeholder="Email"
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
@@ -67,6 +69,9 @@ export const SigninPage = () => {
             </button>
           </div>
         </form>
+        <div className="flex items-center justify-center text-center">Do not have an account ?
+          <Link to="/signup" className="text-gray-700 hover:text-gray-900 ms-1">Sign Up</Link>
+        </div>
       </div>
     </div>
   );

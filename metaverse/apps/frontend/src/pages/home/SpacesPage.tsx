@@ -1,16 +1,18 @@
 // src/pages/home/SpacesPage.tsx
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export const SpacesPage = () => {
   const { isAuthenticated } = useAuth();
-  const [spaces, setSpaces] = useState([]);
+  // const [spaces, setSpaces] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      // Fetch spaces data
+    if (!isAuthenticated) {
+      navigate('/login');
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-100 pt-32 pb-16 sm:pt-40 sm:pb-24">
