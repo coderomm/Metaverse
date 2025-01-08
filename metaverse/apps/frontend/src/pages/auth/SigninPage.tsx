@@ -23,7 +23,7 @@ export const SigninPage = () => {
     try {
       const validData = SigninSchema.parse(formData);
       const response = await authApi.signin(validData);
-      login(response.data.token, { username: formData.username });
+      login(response.data.token, response.data.user);
     } catch (err) {
       setError(err instanceof AxiosError ? err?.response?.data.message : err instanceof Error ? err.message : 'Sign in failed');
     } finally {

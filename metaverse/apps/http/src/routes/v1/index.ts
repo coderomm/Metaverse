@@ -7,6 +7,7 @@ import client from "@repo/db/client";
 import 'dotenv/config'
 import { SignupSchema, SigninSchema } from '../../schema-types';
 import jwt from "jsonwebtoken";
+import generateAvatar from '@repo/avatar-generate/generateAvatar'
 
 export const router = Router();
 
@@ -18,11 +19,19 @@ router.post('/signup', async (req, res) => {
     }
     const hashedPassword = await hash(parsedData.data.password);
     try {
+        const avatarRes = generateAvatar();
+        const avatar = await client.avatar.create({
+            data: {
+                imageUrl: avatarRes.url,
+                name: avatarRes.name
+            }
+        })
         const user = await client.user.create({
             data: {
                 username: parsedData.data.username,
                 password: hashedPassword,
-                role: parsedData.data.type === "admin" ? "Admin" : "User"
+                role: parsedData.data.type === "admin" ? "Admin" : "User",
+                avatarId: avatar.id
             }
         })
         res.json({ userId: user.id })
@@ -41,6 +50,9 @@ router.post('/signin', async (req, res) => {
         const user = await client.user.findUnique({
             where: {
                 username: parsedData.data.username
+            },
+            include: {
+                avatar: true
             }
         })
         if (!user) {
@@ -59,7 +71,16 @@ router.post('/signin', async (req, res) => {
             userId: user.id,
             role: user.role
         }, process.env.JWT_SECRATE || 'JWT_SECRATE');
-        res.json({ token })
+        
+        res.json({
+            token,
+            user: {
+                username: user.username,
+                role: user.role,
+                avatarId: user.avatarId,
+                imageUrl: user.avatar?.imageUrl
+            }
+        });
     } catch (e) {
         res.status(400).json({ message: "Internal server error" })
     }

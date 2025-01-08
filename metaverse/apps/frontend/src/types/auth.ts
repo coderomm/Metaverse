@@ -13,8 +13,15 @@ export const SigninSchema = z.object({
 });
 
 export interface User {
-  username: string;
-  type?: 'user' | 'admin';
+  username: string,
+  role: 'user' | 'admin';
+  avatarId?: string,
+  imageUrl?: string
+}
+
+export interface SignInResponse {
+  token: string,
+  user: User
 }
 
 export type SignupInput = z.infer<typeof SignupSchema>;

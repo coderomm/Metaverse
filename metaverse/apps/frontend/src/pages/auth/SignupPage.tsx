@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { SignupInput, SignupSchema, User } from '../../types/auth';
+import { SignupInput, SignupSchema } from '../../types/auth';
 import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
 
@@ -29,12 +29,7 @@ export const SignupPage = () => {
         username: validData.username,
         password: validData.password
       });
-
-      const userData: User = {
-        username: formData.username,
-        type: formData.type
-      }
-      login(signinResponse.data.token, userData);
+      login(signinResponse.data.token, signinResponse.data.user);
     } catch (err) {
       setError(err instanceof AxiosError ? err?.response?.data.message : err instanceof Error ? err.message : 'Sign up failed');
     } finally {
