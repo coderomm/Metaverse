@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LogOut } from 'lucide-react';
@@ -6,6 +6,18 @@ import { LogOut } from 'lucide-react';
 export const Navbar: React.FC = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b">
@@ -26,42 +38,50 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <div className="relative">
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-3 py-2"
-                  >
-                    <span>{user?.username || 'User'}</span>
+                <div
+                  ref={dropdownRef}
+                  className="relative group"
+                  onClick={() => {
+                    // Only toggle dropdown on mobile
+                    if (window.innerWidth < 1024) {
+                      setIsDropdownOpen(!isDropdownOpen);
+                    }
+                  }}
+                >
+                  <button className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-3 py-2">
+                    <img src={user?.imageUrl} className="w-10 h-10 rounded-full shadow-2xl shadow-purple-500" alt="User" />
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
 
-                  {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-md py-1 ring-1 ring-black ring-opacity-5">
-                      <div className="px-4 py-2 border-b">
-                        <p className="text-base text-purple-500">{user?.username}</p>
-                      </div>
-
-                      <Link to="/spaces" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        My Spaces
-                      </Link>
-                      <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Profile
-                      </Link>
-                      <Link to="/apps" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        My Apps
-                      </Link>
-                      <div className="border-t">
-                        <button
-                          onClick={logout}
-                          className="flex items-center justify-start gap-1 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          <LogOut className='w-4 h-4' />Log out
-                        </button>
-                      </div>
+                  <div
+                    className={`absolute right-0 mt-1 w-64 bg-white rounded-lg shadow-md py-1 ring-1 ring-black ring-opacity-5 
+                      ${isDropdownOpen ? 'block lg:hidden' : 'hidden'} 
+                      lg:group-hover:block transition-all duration-200 ease-in-out`}
+                  >
+                    <div className="px-4 py-2 border-b">
+                      <p className="text-base text-purple-500">{user?.username}</p>
                     </div>
-                  )}
+
+                    <Link to="/spaces" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      My Spaces
+                    </Link>
+                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Profile
+                    </Link>
+                    <Link to="/apps" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      My Apps
+                    </Link>
+                    <div className="border-t">
+                      <button
+                        onClick={logout}
+                        className="flex items-center justify-start gap-1 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <LogOut className="w-4 h-4" />Log out
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (

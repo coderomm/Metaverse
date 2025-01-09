@@ -4,10 +4,10 @@ import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 import { SigninPage } from './pages/auth/SigninPage';
 import { SignupPage } from './pages/auth/SignupPage';
-import { SpacesPage } from './pages/home/SpacesPage';
+import { SpacesPage } from './pages/protected/SpacesPage';
 import { PrivateRoute } from './routes/PrivateRoute';
 import { LandingPage } from './pages/LandingPage';
-import { ProfilePage } from './pages/ProfilePage';
+import { ProfilePage } from './pages/protected/ProfilePage';
 
 export const App = () => (
   <Router>

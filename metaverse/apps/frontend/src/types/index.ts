@@ -24,5 +24,24 @@ export interface SignInResponse {
   user: User
 }
 
+export interface Element {
+  id: string;
+  width: number;
+  height: number;
+  static: boolean;
+  imageUrl: string;
+}
+
+export interface CreateElementData {
+  width: number;
+  height: number;
+  static: boolean;
+  imageUrl: string;
+}
+
+export interface UpdateElementData {
+  imageUrl: string;
+}
+
 export type SignupInput = z.infer<typeof SignupSchema>;
 export type SigninInput = z.infer<typeof SigninSchema>;

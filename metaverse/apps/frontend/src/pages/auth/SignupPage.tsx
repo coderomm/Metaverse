@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { SignupInput, SignupSchema } from '../../types/auth';
+import { SignupInput, SignupSchema } from '../../types';
 import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
 
