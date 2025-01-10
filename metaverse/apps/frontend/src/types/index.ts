@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const SignupSchema = z.object({
   username: z.string().email(),
   password: z.string(),
-  type: z.enum(["user", "admin"]),
+  role: z.enum(["User", "Admin"]),
 });
 
 export const SigninSchema = z.object({
@@ -14,7 +14,7 @@ export const SigninSchema = z.object({
 
 export interface User {
   username: string,
-  role: 'user' | 'admin';
+  role: 'User' | 'Admin';
   avatarId?: string,
   imageUrl?: string
 }

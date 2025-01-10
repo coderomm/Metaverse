@@ -17,7 +17,7 @@ export const Navbar: React.FC = () => {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [user]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b">
@@ -61,12 +61,14 @@ export const Navbar: React.FC = () => {
                       lg:group-hover:block transition-all duration-200 ease-in-out`}
                   >
                     <div className="px-4 py-2 border-b">
-                      <p className="text-base text-purple-500">{user?.username}</p>
+                      <p className="text-base text-purple-500">{user?.username} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
                     </div>
-
-                    <Link to="/spaces" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      My Spaces
-                    </Link>
+                    {/* role: parsedData.data.type === "admin" ? "Admin" : "User", */}
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/element" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Elements
+                      </Link>
+                    )}
                     <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Profile
                     </Link>

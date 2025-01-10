@@ -46,14 +46,14 @@ describe.skip("Authentication", () => {
         const response = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
         expect(response.status).toBe(200);
 
         const secondResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         })
         expect(secondResponse.status).toBe(400);
     });
@@ -74,7 +74,7 @@ describe.skip("Authentication", () => {
         await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
@@ -93,7 +93,7 @@ describe.skip("Authentication", () => {
         await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
@@ -115,7 +115,7 @@ describe.skip("User metadata endpoint", () => {
         await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
 
         const signinResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, { username, password });
@@ -173,7 +173,7 @@ describe.skip("User avatar information", () => {
         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
 
         userId = signupResponse.data.userId;
@@ -225,7 +225,7 @@ describe.skip("Space information", () => {
         const adminSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
         adminId = adminSignupResponse.data.userId
 
@@ -238,7 +238,7 @@ describe.skip("Space information", () => {
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username: username + "-user",
             password,
-            type: "user"
+            role: "User"
         });
 
         userId = userSignupResponse.data.userId
@@ -434,7 +434,7 @@ describe.skip("Arena endpoints", () => {
         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
 
         adminId = signupResponse.data.userId
@@ -449,7 +449,7 @@ describe.skip("Arena endpoints", () => {
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username: username + "-user",
             password,
-            type: "user"
+            role: "User"
         });
 
         userId = userSignupResponse.data.userId
@@ -615,7 +615,7 @@ describe.skip("Admin Endpoints", () => {
         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         });
 
         adminId = signupResponse.data.userId
@@ -630,7 +630,7 @@ describe.skip("Admin Endpoints", () => {
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username: username + "-user",
             password,
-            type: "user"
+            role: "User"
         });
 
         userId = userSignupResponse.data.userId
@@ -793,7 +793,7 @@ describe("Websocket tests", () => {
         const adminSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username,
             password,
-            type: "admin"
+            role: "Admin"
         })
         adminUserId = adminSignupResponse.data.userId;
 
@@ -806,7 +806,7 @@ describe("Websocket tests", () => {
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
             username: username + `-user`,
             password,
-            type: "user"
+            role: "User"
         })
         userId = userSignupResponse.data.userId
 

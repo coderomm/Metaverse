@@ -13,7 +13,7 @@ export const SignupPage = () => {
   const [formData, setFormData] = useState<SignupInput>({
     username: '',
     password: '',
-    type: 'user',
+    role: 'User',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,12 +67,12 @@ export const SignupPage = () => {
           </div>
           <div>
             <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as "user" | "admin" })}
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value as "User" | "Admin" })}
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
             >
-              <option value="user">Regular User</option>
-              <option value="admin">Administrator</option>
+              <option value="User">Regular User</option>
+              <option value="Admin">Administrator</option>
             </select>
           </div>
           <div>

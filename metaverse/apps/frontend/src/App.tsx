@@ -8,6 +8,7 @@ import { SpacesPage } from './pages/protected/SpacesPage';
 import { PrivateRoute } from './routes/PrivateRoute';
 import { LandingPage } from './pages/LandingPage';
 import { ProfilePage } from './pages/protected/ProfilePage';
+import { AdminElements } from './pages/admin/AdminElementManager';
 
 export const App = () => (
   <Router>
@@ -29,6 +30,14 @@ export const App = () => (
             element={
               <PrivateRoute>
                 <ProfilePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/element"
+            element={
+              <PrivateRoute>
+                <AdminElements />
               </PrivateRoute>
             }
           />

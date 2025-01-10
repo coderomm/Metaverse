@@ -5,29 +5,39 @@ interface ElementFormProps {
   initialData?: CreateElementData;
   onSubmit: (data: CreateElementData | UpdateElementData) => Promise<void>;
   isEdit?: boolean;
+  isLoading?: boolean;
 }
-
-export function ElementForm({ initialData, onSubmit, isEdit = false }: ElementFormProps) {
+export function ElementForm({
+  initialData,
+  onSubmit,
+  isEdit = false,
+  isLoading = false
+}: ElementFormProps) {
   const [formData, setFormData] = useState<CreateElementData>({
     width: initialData?.width || 0,
     height: initialData?.height || 0,
     static: initialData?.static || false,
     imageUrl: initialData?.imageUrl || '',
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
     try {
-      await onSubmit(formData);
+      // await onSubmit(formData);
+      if (isEdit) {
+        const updateData: UpdateElementData = {
+          imageUrl: formData.imageUrl
+        };
+        await onSubmit(updateData);
+      } else {
+        // If creating, send all CreateElementData fields
+        await onSubmit(formData);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -43,60 +53,57 @@ export function ElementForm({ initialData, onSubmit, isEdit = false }: ElementFo
           value={formData.imageUrl}
           onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm
-            border p-2 focus:outline-none transition-colors"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
         />
       </div>
 
       {!isEdit && (
-        <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <label htmlFor="width" className="block text-sm font-medium text-gray-700">
-                Width
-              </label>
-              <input
-                type="number"
-                id="width"
-                value={formData.width}
-                onChange={(e) => setFormData({ ...formData, width: Number(e.target.value) })}
-                required
-                min="1"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm
-                  border p-2 focus:outline-none transition-colors"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="height" className="block text-sm font-medium text-gray-700">
-                Height
-              </label>
-              <input
-                type="number"
-                id="height"
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: Number(e.target.value) })}
-                required
-                min="1"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm
-                  border p-2 focus:outline-none transition-colors"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="static"
-              checked={formData.static}
-              onChange={(e) => setFormData({ ...formData, static: e.target.checked })}
-              className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 transition-colors"
-            />
-            <label htmlFor="static" className="ml-2 block text-sm text-gray-700">
-              Static Element
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <label htmlFor="width" className="block text-sm font-medium text-gray-700">
+              Width
             </label>
+            <input
+              type="number"
+              id="width"
+              value={formData.width}
+              onChange={(e) => setFormData({ ...formData, width: Number(e.target.value) })}
+              required
+              min="1"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+            />
           </div>
-        </>
+
+          <div>
+            <label htmlFor="height" className="block text-sm font-medium text-gray-700">
+              Height
+            </label>
+            <input
+              type="number"
+              id="height"
+              value={formData.height}
+              onChange={(e) => setFormData({ ...formData, height: Number(e.target.value) })}
+              required
+              min="1"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+            />
+          </div>
+        </div>
+      )}
+
+      {!isEdit && (
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="static"
+            checked={formData.static}
+            onChange={(e) => setFormData({ ...formData, static: e.target.checked })}
+            className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+          />
+          <label htmlFor="static" className="ml-2 block text-sm text-gray-700">
+            Static Element
+          </label>
+        </div>
       )}
 
       {error && (
@@ -112,10 +119,10 @@ export function ElementForm({ initialData, onSubmit, isEdit = false }: ElementFo
       <div className="flex justify-end">
         <button
           type="submit"
-          disabled={loading}
-          className="inline-flex justify-center rounded-md border border-transparent bg-purple-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          disabled={isLoading}
+          className="inline-flex justify-center rounded-md border border-transparent bg-purple-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50"
         >
-          {loading ? (
+          {isLoading ? (
             <span className="flex items-center">
               <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
