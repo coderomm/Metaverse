@@ -63,11 +63,15 @@ export const Navbar: React.FC = () => {
                     <div className="px-4 py-2 border-b">
                       <p className="text-base text-purple-500">{user?.username} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
                     </div>
-                    {/* role: parsedData.data.type === "admin" ? "Admin" : "User", */}
                     {user?.role === "Admin" && (
-                      <Link to="/admin/element" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Elements
-                      </Link>
+                      <>
+                        <Link to="/admin/avatar" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                          Avatar
+                        </Link>
+                        <Link to="/admin/element" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                          Elements
+                        </Link>
+                      </>
                     )}
                     <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Profile

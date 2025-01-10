@@ -32,6 +32,10 @@ export interface Element {
   imageUrl: string;
 }
 
+export interface GetElementsResponse {
+  elements: Element[];
+}
+
 export interface CreateElementData {
   width: number;
   height: number;
@@ -41,6 +45,21 @@ export interface CreateElementData {
 
 export interface UpdateElementData {
   imageUrl: string;
+}
+
+export interface CreateAvatarData {
+  name: string;
+  imageUrl: string;
+}
+
+export interface Avatar {
+  id: string;
+  imageUrl: string;
+  name: string;
+}
+
+export interface GetAvatarsResponse {
+  avatars: Avatar[];
 }
 
 export type SignupInput = z.infer<typeof SignupSchema>;

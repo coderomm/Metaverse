@@ -8,7 +8,8 @@ import { SpacesPage } from './pages/protected/SpacesPage';
 import { PrivateRoute } from './routes/PrivateRoute';
 import { LandingPage } from './pages/LandingPage';
 import { ProfilePage } from './pages/protected/ProfilePage';
-import { AdminElements } from './pages/admin/AdminElementManager';
+import { ElementsManager } from './pages/admin/ElementsManager';
+import { AvatarsManager } from './pages/admin/AvatarsManager';
 
 export const App = () => (
   <Router>
@@ -37,7 +38,15 @@ export const App = () => (
             path="/admin/element"
             element={
               <PrivateRoute>
-                <AdminElements />
+                <ElementsManager />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/avatar"
+            element={
+              <PrivateRoute>
+                <AvatarsManager />
               </PrivateRoute>
             }
           />
