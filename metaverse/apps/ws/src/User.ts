@@ -39,7 +39,7 @@ export class User {
                     const spaceId = parsedData.payload.spaceId;
                     const token = parsedData.payload.token;
                     try {
-                        const userId = (jwt.verify(token, process.env.JWT_SECRATE || 'JWT_SECRATE') as JwtPayload).userId
+                        const userId = (jwt.verify(token, process.env.JWT_SECRET || 'someSuperSecretKey') as JwtPayload).userId
                         if (!userId) {
                             console.log("Invalid token, closing WebSocket.");
                             this.ws.close()

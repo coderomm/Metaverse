@@ -1,13 +1,13 @@
 import z from "zod";
 
 export const SignupSchema = z.object({
-    username: z.string(),
+    email: z.string().email(),
     password: z.string(),
     role: z.enum(["User", "Admin"]),
 })
 
 export const SigninSchema = z.object({
-    username: z.string(),
+    email: z.string().email(),
     password: z.string(),
 })
 
@@ -54,7 +54,7 @@ export const CreateMapSchema = z.object({
     name: z.string(),
     defaultElements: z.array(z.object({
         elementId: z.string(),
-        x: z.number(),  
+        x: z.number(),
         y: z.number(),
     }))
 })
@@ -62,9 +62,9 @@ export const CreateMapSchema = z.object({
 
 declare global {
     namespace Express {
-      export interface Request {
-        role?: "Admin" | "User";
-        userId?: string;
-      }
+        export interface Request {
+            role?: "Admin" | "User";
+            userId?: string;
+        }
     }
 }

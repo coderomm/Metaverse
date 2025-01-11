@@ -61,7 +61,7 @@ export const Navbar: React.FC = () => {
                       lg:group-hover:block transition-all duration-200 ease-in-out`}
                   >
                     <div className="px-4 py-2 border-b">
-                      <p className="text-base text-purple-500">{user?.username} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
+                      <p className="text-base text-purple-500">{user?.email} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
                     </div>
                     {user?.role === "Admin" && (
                       <>

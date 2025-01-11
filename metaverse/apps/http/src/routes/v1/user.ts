@@ -47,3 +47,38 @@ userRouter.get("/metadata/bulk", async (req, res) => {
         }))
     })
 })
+
+userRouter.get('/me', userMiddleware, async (req, res) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return
+        }
+
+        const user = await client.user.findUnique({
+            where: { id: userId },
+            include: { avatar: true }
+        });
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' });
+            return
+        }
+
+        res.json({
+            user: {
+                username: user.email,
+                role: user.role,
+                avatarId: user.avatarId,
+                imageUrl: user.avatar?.imageUrl
+            }
+        });
+
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({ error: 'Unauthorized' });
+        return
+    }
+});

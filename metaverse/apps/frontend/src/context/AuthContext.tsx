@@ -5,10 +5,11 @@ import { User } from '../types';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (toke: string, user: User) => void;
-  logout: () => void;
   isLoading: boolean;
   user: User | null;
+  login: (toke: string, user: User) => void;
+  logout: () => void;
+  fetchCurrentUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -19,15 +20,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
+  const fetchCurrentUser = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await authApi.getMe();
+      setUser(data.user);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-      setIsAuthenticated(true);
+    if (token) {
+      fetchCurrentUser();
+    } else {
+      setIsAuthenticated(!!token);
+      setIsLoading(false);
     }
-    setIsAuthenticated(!!token);
-    setIsLoading(false);
   }, []);
 
   const login = (token: string, userData: User) => {
@@ -41,6 +58,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await authApi.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -51,11 +70,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-dvh my-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+    </div>
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, login, logout, fetchCurrentUser }}>
       {children}
     </AuthContext.Provider>
   );
