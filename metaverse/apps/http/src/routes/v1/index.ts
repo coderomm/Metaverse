@@ -8,6 +8,7 @@ import 'dotenv/config'
 import { SignupSchema, SigninSchema } from '../../schema-types';
 import jwt from "jsonwebtoken";
 import generateAvatar from '@repo/avatar-generate/generateAvatar'
+import rateLimit from "express-rate-limit";
 
 export const router = Router();
 
@@ -28,7 +29,7 @@ router.post('/signup', async (req, res) => {
         })
         const user = await client.user.create({
             data: {
-                username: parsedData.data.username,
+                email: parsedData.data.email,
                 password: hashedPassword,
                 role: parsedData.data.role,
                 avatarId: avatar.id
@@ -40,7 +41,13 @@ router.post('/signup', async (req, res) => {
     }
 })
 
-router.post('/signin', async (req, res) => {
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10, // Only allow 10 login attempts per 15 minutes
+    message: 'Too many login attempts, please try again later.'
+});
+
+router.post('/signin', loginLimiter, async (req, res) => {
     const parsedData = SigninSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(403).json({ message: "Validation failed" })
@@ -49,14 +56,14 @@ router.post('/signin', async (req, res) => {
     try {
         const user = await client.user.findUnique({
             where: {
-                username: parsedData.data.username
+                email: parsedData.data.email
             },
             include: {
                 avatar: true
             }
         })
         if (!user) {
-            res.status(403).json({ message: "User not found" })
+            res.status(404).json({ message: "User not found" })
             return
         }
 
@@ -70,12 +77,12 @@ router.post('/signin', async (req, res) => {
         const token = jwt.sign({
             userId: user.id,
             role: user.role
-        }, process.env.JWT_SECRATE || 'JWT_SECRATE');
-        
+        }, process.env.JWT_SECRET || 'someSuperSecretKey');
+
         res.json({
             token,
             user: {
-                username: user.username,
+                username: user.email,
                 role: user.role,
                 avatarId: user.avatarId,
                 imageUrl: user.avatar?.imageUrl

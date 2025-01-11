@@ -11,7 +11,7 @@ export const SigninPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<SigninInput>({
-    username: '',
+    email: '',
     password: '',
   });
 
@@ -44,8 +44,8 @@ export const SigninPage = () => {
               type="email"
               required
               placeholder="Email"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
             />
           </div>

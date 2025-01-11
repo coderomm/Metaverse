@@ -3,6 +3,7 @@ import { adminMiddleware } from "../../middlewares/admin";
 import { CreateAvatarSchema, CreateElementSchema, CreateMapSchema, UpdateElementSchema } from "../../schema-types";
 import client from "@repo/db/client";
 export const adminRouter = Router();
+
 adminRouter.use(adminMiddleware)
 
 adminRouter.post("/element", async (req, res) => {
@@ -84,3 +85,7 @@ adminRouter.post("/map", async (req, res) => {
         id: map.id
     })
 })
+
+adminRouter.get('/secret', (req, res) => {
+    res.status(200).json({ message: 'Welcome admin! This is the secret info.' });
+});

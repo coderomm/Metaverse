@@ -41,24 +41,24 @@ const axios = {
 
 describe.skip("Authentication", () => {
     test('Only unique user can signup', async () => {
-        const username = "Om" + Math.random();
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123";
         const response = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
         expect(response.status).toBe(200);
 
         const secondResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         })
         expect(secondResponse.status).toBe(400);
     });
 
-    test('Signup request fails if the username is empty', async () => {
+    test('Signup request fails if the email is empty', async () => {
         const password = "Password@123";
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
@@ -67,18 +67,18 @@ describe.skip("Authentication", () => {
         expect(response.status).toBe(400);
     });
 
-    test('Signin succeeds if the username and password are correct', async () => {
-        const username = `Om-${Math.random()}`;
+    test('Signin succeeds if the email and password are correct', async () => {
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123";
 
         await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username,
+            email,
             password
         });
 
@@ -86,18 +86,18 @@ describe.skip("Authentication", () => {
         expect(response.data.token).toBeDefined();
     });
 
-    test('Signin fails if the username and password are incorrect', async () => {
-        const username = `Om-${Math.random()}`;
+    test('Signin fails if the email and password are incorrect', async () => {
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123";
 
         await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: "WrongUsername",
+            email: "WrongUsername",
             password
         })
         expect(response.status).toBe(403);
@@ -109,16 +109,16 @@ describe.skip("User metadata endpoint", () => {
     let avatarId = ""
 
     beforeAll(async () => {
-        const username = `Om-${Math.random()}`
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123"
 
         await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
 
-        const signinResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, { username, password });
+        const signinResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, { email, password });
 
         token = signinResponse.data.token
 
@@ -167,18 +167,18 @@ describe.skip("User avatar information", () => {
     let userId;
 
     beforeAll(async () => {
-        const username = `Om-${Math.random()}`
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123"
 
         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
 
         userId = signupResponse.data.userId;
 
-        const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, { username, password });
+        const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, { email, password });
 
         token = response.data.token
 
@@ -219,24 +219,24 @@ describe.skip("Space information", () => {
     let userId;
 
     beforeAll(async () => {
-        const username = `Om-${Math.random()}`
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123"
 
         const adminSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
         adminId = adminSignupResponse.data.userId
 
         const adminSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username,
+            email,
             password
         })
         adminToken = adminSigninResponse.data.token
 
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username: username + "-user",
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password,
             role: "User"
         });
@@ -244,7 +244,7 @@ describe.skip("Space information", () => {
         userId = userSignupResponse.data.userId
 
         const userSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: username + "-user",
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password
         })
 
@@ -428,11 +428,11 @@ describe.skip("Arena endpoints", () => {
     let spaceId;
 
     beforeAll(async () => {
-        const username = `Om-${Math.random()}`
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123"
 
         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
@@ -440,14 +440,14 @@ describe.skip("Arena endpoints", () => {
         adminId = signupResponse.data.userId
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: username,
+            email: email,
             password
         })
 
         adminToken = response.data.token
 
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username: username + "-user",
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password,
             role: "User"
         });
@@ -455,7 +455,7 @@ describe.skip("Arena endpoints", () => {
         userId = userSignupResponse.data.userId
 
         const userSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: username + "-user",
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password
         })
 
@@ -609,11 +609,11 @@ describe.skip("Admin Endpoints", () => {
     let userId;
 
     beforeAll(async () => {
-        const username = `Om-${Math.random()}`
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123"
 
         const signupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         });
@@ -621,14 +621,14 @@ describe.skip("Admin Endpoints", () => {
         adminId = signupResponse.data.userId
 
         const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: username,
+            email: email,
             password
         })
 
         adminToken = response.data.token
 
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username: username + "-user",
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password,
             role: "User"
         });
@@ -636,7 +636,7 @@ describe.skip("Admin Endpoints", () => {
         userId = userSignupResponse.data.userId
 
         const userSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: username + "-user",
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password
         })
 
@@ -788,30 +788,30 @@ describe("Websocket tests", () => {
 
     async function setupHTTP() {
         console.log('Setting up HTTP...');
-        const username = `Om-${Math.random()}`
+        const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123"
         const adminSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username,
+            email,
             password,
             role: "Admin"
         })
         adminUserId = adminSignupResponse.data.userId;
 
         const adminSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username,
+            email,
             password
         })
         adminToken = adminSigninResponse.data.token;
 
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            username: username + `-user`,
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password,
             role: "User"
         })
         userId = userSignupResponse.data.userId
 
         const userSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            username: username + `-user`,
+            email: "NormalUser" + Math.random() + "@gmail.com",
             password
         })
         userToken = userSigninResponse.data.token

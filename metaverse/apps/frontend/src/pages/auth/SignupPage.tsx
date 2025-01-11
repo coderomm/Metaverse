@@ -11,7 +11,7 @@ export const SignupPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<SignupInput>({
-    username: '',
+    email: '',
     password: '',
     role: 'User',
   });
@@ -26,7 +26,7 @@ export const SignupPage = () => {
       await authApi.signup(validData);
 
       const signinResponse = await authApi.signin({
-        username: validData.username,
+        email: validData.email,
         password: validData.password
       });
       login(signinResponse.data.token, signinResponse.data.user);
@@ -50,8 +50,8 @@ export const SignupPage = () => {
               type="email"
               required
               placeholder="Email"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
             />
           </div>
