@@ -1,9 +1,9 @@
 import express, { Application } from 'express';
 import { router } from './routes/v1';
 import cors from "cors";
-import helmet from 'helmet';
 
-const app: Application = express();
+const app = express();
+app.use(express.json());
 
 const allowedOrigins = [
     `${process.env.FRONTEND_URL}`,
@@ -13,8 +13,6 @@ app.use(cors({
     origin: allowedOrigins,
     credentials: true
 }));
-app.use(express.json());
-app.use(helmet());
 
 // const globalLimiter = rateLimit({
 //     windowMs: 5 * 60 * 1000,

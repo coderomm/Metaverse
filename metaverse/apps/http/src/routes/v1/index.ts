@@ -83,7 +83,7 @@ router.post('/signin', loginLimiter, async (req, res) => {
         res.json({
             token,
             user: {
-                username: user.email,
+                email: user.email,
                 role: user.role,
                 avatarId: user.avatarId,
                 imageUrl: user.avatar?.imageUrl

@@ -66,18 +66,18 @@ export const Navbar: React.FC = () => {
                     {user?.role === "Admin" && (
                       <>
                         <Link to="/admin/avatar" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Avatar
+                          Create Avatar
                         </Link>
                         <Link to="/admin/element" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Elements
+                          Create Elements
+                        </Link>
+                        <Link to="/admin/map" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                          Create Map
                         </Link>
                       </>
                     )}
                     <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Profile
-                    </Link>
-                    <Link to="/apps" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      My Apps
                     </Link>
                     <div className="border-t">
                       <button

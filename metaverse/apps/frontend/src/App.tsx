@@ -10,9 +10,12 @@ import { LandingPage } from './pages/LandingPage';
 import { ProfilePage } from './pages/protected/ProfilePage';
 import { ElementsManager } from './pages/admin/ElementsManager';
 import { AvatarsManager } from './pages/admin/AvatarsManager';
+import { Toaster } from 'sonner';
+import MapCreator from './pages/admin/MapCreator';
 
 export const App = () => (
   <Router>
+    <Toaster />
     <AuthProvider>
       <Layout>
         <Routes>
@@ -47,6 +50,14 @@ export const App = () => (
             element={
               <PrivateRoute>
                 <AvatarsManager />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/map"
+            element={
+              <PrivateRoute>
+                <MapCreator />
               </PrivateRoute>
             }
           />

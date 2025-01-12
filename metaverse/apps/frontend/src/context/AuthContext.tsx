@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api';
 import { User } from '../types';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -26,8 +27,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data } = await authApi.getMe();
       setUser(data.user);
       setIsAuthenticated(true);
+      toast.info('Hello ' + data.user.email)
     } catch (error) {
       console.error('Error fetching current user:', error);
+      toast.error('Error fetching current user');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       setUser(null);

@@ -62,5 +62,18 @@ export interface GetAvatarsResponse {
   avatars: Avatar[];
 }
 
+export interface MapElement {
+  elementId: string;
+  x: string;
+  y: string;
+}
+
+export interface MapCreateFormData {
+  name: string;
+  dimensions: string;
+  thumbnail: string;
+  defaultElements: MapElement[];
+}
+
 export type SignupInput = z.infer<typeof SignupSchema>;
 export type SigninInput = z.infer<typeof SigninSchema>;

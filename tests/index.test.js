@@ -39,7 +39,7 @@ const axios = {
     },
 }
 
-describe.skip("Authentication", () => {
+describe("Authentication", () => {
     test('Only unique user can signup', async () => {
         const email = "AdminUser" + Math.random() + "@gmail.com";
         const password = "Password@123";
@@ -104,7 +104,7 @@ describe.skip("Authentication", () => {
     });
 });
 
-describe.skip("User metadata endpoint", () => {
+describe("User metadata endpoint", () => {
     let token = "";
     let avatarId = ""
 
@@ -161,7 +161,7 @@ describe.skip("User metadata endpoint", () => {
     });
 });
 
-describe.skip("User avatar information", () => {
+describe("User avatar information", () => {
     let avatarId;
     let token;
     let userId;
@@ -209,7 +209,7 @@ describe.skip("User avatar information", () => {
     })
 })
 
-describe.skip("Space information", () => {
+describe("Space information", () => {
     let mapId;
     let element1Id;
     let element2Id;
@@ -417,7 +417,7 @@ describe.skip("Space information", () => {
     })
 })
 
-describe.skip("Arena endpoints", () => {
+describe("Arena endpoints", () => {
     let mapId;
     let element1Id;
     let element2Id;
@@ -602,7 +602,7 @@ describe.skip("Arena endpoints", () => {
 
 })
 
-describe.skip("Admin Endpoints", () => {
+describe("Admin Endpoints", () => {
     let adminToken;
     let adminId;
     let userToken;
@@ -751,7 +751,7 @@ describe.skip("Admin Endpoints", () => {
 });
 
 jest.setTimeout(10000);
-describe("Websocket tests", () => {
+describe.skip("Websocket tests", () => {
     let adminToken;
     let adminUserId;
     let userToken;
