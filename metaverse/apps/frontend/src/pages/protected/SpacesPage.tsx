@@ -1,33 +1,14 @@
 // src/pages/home/SpacesPage.tsx
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Plus } from 'lucide-react';
 import Section from '../../components/ui/Section';
-
-interface Map {
-  id: string;
-  name: string;
-  width: number;
-  height: number;
-  thumbnail: string;
-  mapElements: {
-    id: {
-      id: string;
-      mapId: string;
-      elementId: string;
-      x: number;
-      y: number;
-    }[];
-  };
-}
-
-interface MapResponse {
-  maps: Map[];
-}
+import { CreateSpaceDialog } from '../../components/admin/CreateSpaceDialog';
 
 export const SpacesPage = () => {
   const { isAuthenticated } = useAuth();
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,10 +32,16 @@ export const SpacesPage = () => {
           <span className='text-[#27262e] font-bold cursor-pointer text-base'>My Spaces</span>
           <div className="sticky right-0 bottom-0 left-0 flex gap-2 justify-between items-center py-3 w-full lg:w-1/3">
             <button className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] px-2 lg:px-6 py-2 w-full h-[48px] rounded-lg flex items-center justify-center'>Enter with Code</button>
-            <button className='bg-[#6758ff] hover:bg-[#5246cc] text-[#ffffff] px-2 lg:px-6 py-2 w-full h-[48px] rounded-lg flex items-center justify-center gap-2'><Plus className='w-6 h-6' />Create Space</button>
+            <button
+              onClick={() => setCreateDialogOpen(true)}
+              className='bg-[#6758ff] hover:bg-[#5246cc] text-[#ffffff] px-2 lg:px-6 py-2 w-full h-[48px] rounded-lg flex items-center justify-center gap-2'><Plus className='w-6 h-6' />Create Space</button>
           </div>
         </div>
       </Section>
+      <CreateSpaceDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+      />
     </div>
   );
 };
