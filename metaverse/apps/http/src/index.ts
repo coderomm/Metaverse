@@ -1,6 +1,7 @@
-import express, { Application } from 'express';
+import express from 'express';
 import { router } from './routes/v1';
 import cors from "cors";
+import 'dotenv/config'
 
 const app = express();
 app.use(express.json());

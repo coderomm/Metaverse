@@ -1,6 +1,7 @@
 // src/services/api.ts
 import axios, { AxiosError } from 'axios';
 import { SignupInput, SigninInput } from '../types';
+import { toast } from 'sonner';
 
 const BACKEND_URL = 'http://localhost:3000/api/v1';
 
@@ -21,11 +22,13 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/signin';
-    }
+  (error) => {
+    // if (error.response?.status === 401) {
+    //   localStorage.removeItem('token');
+    //   window.location.href = '/signin';
+    // }
+    console.error(error instanceof AxiosError ? error?.response?.data.message : error instanceof Error ? error.message : 'Some Brutal Error');
+    toast.error(error instanceof AxiosError ? error?.response?.data.message : error instanceof Error ? error.message : 'Some Brutal Error');
     return Promise.reject(error);
   }
 );

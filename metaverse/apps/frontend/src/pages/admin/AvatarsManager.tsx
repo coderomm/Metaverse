@@ -4,6 +4,7 @@ import { Avatar, CreateAvatarData, GetAvatarsResponse } from '../../types';
 import { api } from '../../services/api';
 import { AxiosError } from 'axios';
 import { AvatarForm } from '../../components/admin/AvatarForm';
+import { toast } from 'sonner';
 
 export function AvatarsManager() {
     const [avatars, setAvatars] = useState<Avatar[]>([]);
@@ -26,6 +27,7 @@ export function AvatarsManager() {
                 ? error.message
                 : 'An unexpected error occurred';
         setError(message);
+        toast.info(message)
     };
 
     // Fetch avatars
@@ -55,8 +57,10 @@ export function AvatarsManager() {
             await elementsApi.createElement(data);
             await fetchElements();
             setShowCreateForm(false);
+            toast.success('Avatar created successfully')
         } catch (err) {
             handleError(err);
+            toast.error('Error: ' + err)
             throw err;
         } finally {
             setIsSubmitting(false);
@@ -127,11 +131,11 @@ export function AvatarsManager() {
                         <ul className="divide-y divide-gray-200">
                             {avatars.map((avatar) => (
                                 <li key={avatar.id} className="px-4 py-4 flex items-center justify-start gap-4 sm:px-6">
-                                        <img
-                                            src={avatar.imageUrl}
-                                            alt="Avatar preview"
-                                            className="h-10 w-10 rounded-md md:w-14 md:h-14"
-                                        />
+                                    <img
+                                        src={avatar.imageUrl}
+                                        alt="Avatar preview"
+                                        className="h-10 w-10 rounded-md md:w-14 md:h-14"
+                                    />
                                     <h4 className='text-base md:text-lg'>{avatar.name}</h4>
                                 </li>
                             ))}

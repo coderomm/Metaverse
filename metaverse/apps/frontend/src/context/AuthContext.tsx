@@ -56,13 +56,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(userData);
     setIsAuthenticated(true);
     navigate('/home/spaces');
+    toast.info('Hello ' + userData.email)
   };
 
   const logout = async () => {
     try {
       await authApi.logout();
+      toast.info('Logout successful')
     } catch (error) {
       console.error('Logout error:', error);
+      toast.info('Logout error: ' + error)
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

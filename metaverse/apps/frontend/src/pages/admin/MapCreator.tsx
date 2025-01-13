@@ -70,7 +70,7 @@ const MapCreator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 pt-[70px] md:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 pt-[70px] md:p-8 md:pt-[80px]">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-purple-600">Create New Map</h2>

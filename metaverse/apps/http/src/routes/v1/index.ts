@@ -1,10 +1,10 @@
+import 'dotenv/config'
 import { Router } from "express";
 import { userRouter } from "./user";
 import { spaceRouter } from "./space";
 import { adminRouter } from "./admin";
 import { compare, hash } from "../../scrypt";
 import client from "@repo/db/client";
-import 'dotenv/config'
 import { SignupSchema, SigninSchema } from '../../schema-types';
 import jwt from "jsonwebtoken";
 import generateAvatar from '@repo/avatar-generate/generateAvatar'

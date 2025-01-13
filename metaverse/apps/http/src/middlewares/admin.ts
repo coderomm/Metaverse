@@ -1,8 +1,10 @@
 
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import 'dotenv/config'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'someSuperSecretKey';
+console.log('JWT_SECRET === ', JWT_SECRET)
 
 export const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
@@ -10,6 +12,8 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         res.status(403).json({ error: 'No authorization header' });
         return;
     }
+
+    console.error('authHeader = ', authHeader)
 
     const token = authHeader?.split(" ")[1];
 
@@ -27,7 +31,8 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         req.userId = decoded.userId
         next()
     } catch (e) {
-        res.status(401).json({ message: "Unauthorized" })
+        console.error('Internal Error while creating map = ', e)
+        res.status(401).json({ message: e })
         return
     }
 }
