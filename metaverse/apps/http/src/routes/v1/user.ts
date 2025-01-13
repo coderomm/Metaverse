@@ -6,9 +6,7 @@ import { UpdateMetadataSchema } from "../../schema-types";
 export const userRouter = Router();
 
 userRouter.post("/metadata", userMiddleware, async (req, res) => {
-    console.log('req.body ==== ', req.body)
     const parsedData = UpdateMetadataSchema.safeParse(req.body)
-    console.log('parsedData === ', parsedData.data)
     if (!parsedData.success) {
         res.status(400).json({ message: "Metadata validation failed" })
         return

@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import 'dotenv/config'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'someSuperSecretKey';
-console.log('JWT_SECRET === ', JWT_SECRET)
 
 export const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;

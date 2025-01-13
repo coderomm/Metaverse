@@ -120,6 +120,38 @@ router.get("/avatars", async (req, res) => {
     })
 })
 
+router.get("/maps", async (req, res) => {
+    try {
+        const maps = await client.map.findMany({
+            include: {
+                mapElements: true
+            }
+        })
+        res.json({
+            maps: maps.map(x => ({
+                id: x.id,
+                name: x.name,
+                width: x.width,
+                height: x.height,
+                thumbnail: x.thumbnail,
+                mapElements: {
+                    id: x.mapElements.map(m => ({
+                        id: m.id,
+                        mapId: m.mapId,
+                        elementId: m.elementId,
+                        x: m.x,
+                        y: m.y
+                    }))
+                }
+            }))
+        })
+    } catch (error) {
+        console.error('Error while fetching maps: ', error)
+        res.status(401).json({ message: error })
+        return
+    }
+})
+
 router.use('/user', userRouter);
 router.use('/space', spaceRouter);
 router.use('/admin', adminRouter);

@@ -23,10 +23,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // if (error.response?.status === 401) {
-    //   localStorage.removeItem('token');
-    //   window.location.href = '/signin';
-    // }
     console.error(error instanceof AxiosError ? error?.response?.data.message : error instanceof Error ? error.message : 'Some Brutal Error');
     toast.error(error instanceof AxiosError ? error?.response?.data.message : error instanceof Error ? error.message : 'Some Brutal Error');
     return Promise.reject(error);
