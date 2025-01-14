@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api';
 import { User } from '../types';
 import { toast } from 'sonner';
+import SpinLoader from '../components/ui/SpinLoader';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -77,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-dvh my-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      <SpinLoader />
     </div>
   }
 

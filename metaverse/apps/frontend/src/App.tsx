@@ -12,6 +12,7 @@ import { ElementsManager } from './pages/admin/ElementsManager';
 import { AvatarsManager } from './pages/admin/AvatarsManager';
 import { Toaster } from 'sonner';
 import MapCreator from './pages/admin/MapCreator';
+import PlayPage2 from './pages/protected/PlayPage2';
 
 export const App = () => (
   <Router>
@@ -61,6 +62,7 @@ export const App = () => (
               </PrivateRoute>
             }
           />
+          <Route path="/play" element={<PlayPage2 />} />
           {/* <Route path="/" element={<Navigate to="/home/spaces" />} /> */}
           <Route path="/" element={<LandingPage />} />
         </Routes>

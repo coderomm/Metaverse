@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { Plus, X } from 'lucide-react';
+import SpinLoader from '../ui/SpinLoader';
 
 interface Map {
     id: string;
@@ -104,7 +105,7 @@ export const CreateSpaceDialog = ({
 
             if (response.data.spaceId) {
                 onClose();
-                navigate(`/play`);
+                navigate(`/play?spaceId=${response.data.spaceId}`);
             }
         } catch (error) {
             console.error('Error creating space:', error);
@@ -151,10 +152,10 @@ export const CreateSpaceDialog = ({
 
                         {loading ? (
                             <div className="h-96 flex items-center justify-center">
-                                Loading maps...
+                                <SpinLoader />
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
                                 <div
                                     onClick={() => setStep('configure-space')}
                                     className="cursor-pointer group relative rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-purple-500 flex items-center justify-center aspect-video"
