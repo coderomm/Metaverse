@@ -1,9 +1,17 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Plus, X, Upload } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { MapCreateFormData, MapElement } from '../../types';
+
+type ElementData = {
+  id: string;
+  imageUrl: string;
+  width: number;
+  height: number;
+  static: boolean;
+};
 
 const MapCreator = () => {
   const [formData, setFormData] = useState<MapCreateFormData>({
@@ -15,11 +23,30 @@ const MapCreator = () => {
 
   const [elementInput, setElementInput] = useState<MapElement>({
     elementId: '',
-    x: '',
-    y: ''
+    x: 0,
+    y: 0
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [availableElements, setAvailableElements] = useState<ElementData[]>([]);
+
+  useEffect(() => {
+    const fetchElements = async () => {
+      try {
+        const response = await api.get('/elements');
+        setAvailableElements(response.data.elements);
+      } catch (error) {
+        const errorMessage = error instanceof AxiosError
+          ? error.response?.data.message
+          : error instanceof Error
+            ? error.message
+            : 'Creating map failed';
+        toast.error('Failed to fetch elements: ' + errorMessage);
+      }
+    };
+
+    fetchElements();
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,7 +73,7 @@ const MapCreator = () => {
         : err instanceof Error
           ? err.message
           : 'Creating map failed';
-      toast.error(errorMessage);
+      toast.error('Creating map failed: ' + errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +85,7 @@ const MapCreator = () => {
         ...prev,
         defaultElements: [...prev.defaultElements, elementInput]
       }));
-      setElementInput({ elementId: '', x: '', y: '' });
+      setElementInput({ elementId: '', x: 0, y: 0 });
     }
   };
 
@@ -119,23 +146,33 @@ const MapCreator = () => {
                 <h3 className="font-medium text-gray-700">Default Elements</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  <input
-                    type="text"
+                  <select
                     value={elementInput.elementId}
-                    onChange={(e) => setElementInput(prev => ({ ...prev, elementId: e.target.value }))}
-                    placeholder="Element ID"
+                    onChange={(e) =>
+                      setElementInput(prev => ({
+                        ...prev,
+                        elementId: e.target.value,
+                      }))
+                    }
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  />
+                  >
+                    <option value="">Select Element</option>
+                    {availableElements.map(element => (
+                      <option key={element.id} value={element.id}>
+                        {element.id} ({element.width}x{element.height})
+                      </option>
+                    ))}
+                  </select>
                   <input
                     type="number"
-                    onChange={(e) => setElementInput(prev => ({ ...prev, x: e.target.value }))}
+                    onChange={(e) => setElementInput(prev => ({ ...prev, x: parseInt(e.target.value) }))}
                     placeholder="X Position"
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   />
                   <input
                     type="number"
                     value={elementInput.y}
-                    onChange={(e) => setElementInput(prev => ({ ...prev, y: e.target.value }))}
+                    onChange={(e) => setElementInput(prev => ({ ...prev, y: parseInt(e.target.value) }))}
                     placeholder="Y Position"
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                   />

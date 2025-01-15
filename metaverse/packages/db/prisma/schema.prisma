@@ -34,6 +34,8 @@ model Space {
   creatorId     String
   creator       User            @relation(fields: [creatorId], references: [id])
   spaceElements SpaceElements[]
+  mapId         String?
+  map           Map?            @relation(fields: [mapId], references: [id])
 }
 
 model SpaceElements {
@@ -63,6 +65,7 @@ model Map {
   name        String
   thumbnail   String
   mapElements MapElements[]
+  Space       Space[]
 }
 
 model MapElements {

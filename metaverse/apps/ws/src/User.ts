@@ -49,6 +49,8 @@ export class User {
                         const space = await client.space.findFirst({
                             where: {
                                 id: spaceId
+                            },include:{
+                                
                             }
                         })
                         if (!space) {
@@ -69,6 +71,7 @@ export class User {
                                     x: this.x,
                                     y: this.y
                                 },
+                                space:space,
                                 users: RoomManager.getInstance().rooms.get(spaceId)?.filter(x => x.id !== this.id)?.map((u) => ({ id: u.id })) ?? []
                             }
                         })

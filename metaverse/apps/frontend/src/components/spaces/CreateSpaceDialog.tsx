@@ -271,7 +271,10 @@ export const CreateSpaceDialog = ({
 
                         <div className="flex justify-end gap-4 pt-4">
                             <button
-                                onClick={() => setStep('select-map')}
+                                onClick={() => {
+                                    setStep('select-map')
+                                    setSelectedMap(null);
+                                }}
                                 className="px-6 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
                             >
                                 Back

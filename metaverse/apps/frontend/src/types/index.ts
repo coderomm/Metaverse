@@ -64,8 +64,8 @@ export interface GetAvatarsResponse {
 
 export interface MapElement {
   elementId: string;
-  x: string;
-  y: string;
+  x: number;
+  y: number;
 }
 
 export interface MapCreateFormData {

@@ -16,7 +16,7 @@ export function ElementsManager() {
   // API calls defined within the component
   const elementsApi = {
     getElements: () => api.get<GetElementsResponse>('/elements'),
-    createElement: (data: CreateElementData) => api.post<Element>('/element', data),
+    createElement: (data: CreateElementData) => api.post<Element>('/admin/element', data),
     updateElement: (id: string, data: UpdateElementData) => 
       api.put<Element>(`/element/${id}`, data),
     deleteElement: (id: string) => api.delete(`/admin/element/${id}`),
