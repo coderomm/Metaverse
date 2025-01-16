@@ -49,8 +49,8 @@ export class User {
                         const space = await client.space.findFirst({
                             where: {
                                 id: spaceId
-                            },include:{
-                                
+                            }, include: {
+                                map: true
                             }
                         })
                         if (!space) {
@@ -71,7 +71,7 @@ export class User {
                                     x: this.x,
                                     y: this.y
                                 },
-                                space:space,
+                                space: space,
                                 users: RoomManager.getInstance().rooms.get(spaceId)?.filter(x => x.id !== this.id)?.map((u) => ({ id: u.id })) ?? []
                             }
                         })
@@ -94,7 +94,23 @@ export class User {
                     const moveY = parsedData.payload.y
                     const xDisplacement = Math.abs(this.x - moveX)
                     const yDisplacement = Math.abs(this.y - moveY)
-                    if ((xDisplacement == 1 && yDisplacement == 0) || (xDisplacement == 0 && yDisplacement == 1)) {
+                    console.log('moveX - ', moveX)
+                    console.log('moveY - ', moveY)
+                    console.log('xDisplacement - ', xDisplacement)
+                    console.log('yDisplacement - ', yDisplacement)
+                    const space = await client.space.findFirst({
+                        where: {
+                            id: this.spaceId
+                        }, include: {
+                            map: true
+                        }
+                    })
+                    if (!space) {
+                        console.log(`Space not found: ${spaceId}`);
+                        this.ws.close()
+                        return
+                    }
+                    if ((moveX >= 0 && moveY >= 0 && moveX <= space.width && moveY <= space.height) && ((xDisplacement == 1 && yDisplacement == 0) || (xDisplacement == 0 && yDisplacement == 1))) {
                         this.x = moveX
                         this.y = moveY
                         RoomManager.getInstance().broadcast({
@@ -104,9 +120,9 @@ export class User {
                                 y: this.y
                             }
                         }, this, this.spaceId!)
+                        console.log('Inside this - ')
                         return
                     }
-
                     this.send({
                         type: "movement-rejected",
                         payload: {

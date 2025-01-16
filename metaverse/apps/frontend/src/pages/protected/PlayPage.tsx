@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ArrowLeft, Users, MessageCircle, Settings, X } from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, Settings, X, AlignJustify } from 'lucide-react';
 import { toast } from 'sonner';
+import PlayMap from '../../components/ui/Map';
 
-const TILE_SIZE = 32; // Size of each movement tile
+const TILE_SIZE = 32;    // Size of each movement tile
 const COLORS = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
     '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#1ABC9C'
@@ -28,6 +29,15 @@ const PlayPage = () => {
     const positionRef = useRef({ x: 0, y: 0 });
     const [users, setUsers] = useState<Map<string, UserRes>>(new Map());
     const [showUsers, setShowUsers] = useState(false);
+    const [space, setSpace] = useState<{
+        creatorId: string,
+        height: number,
+        id: string,
+        mapId?: string,
+        name: string,
+        thumbnail?: string,
+        width: number
+    }>()
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -48,14 +58,7 @@ const PlayPage = () => {
         }
         setToken(token);
 
-        // try {
-        //     const res = ap
-        // } catch (e) {
-        //     console.error('Error in fetching spacedetails: ', e)
-        // }
-
         const socket = new WebSocket('ws://localhost:3001');
-
         socket.onopen = () => {
             socket.send(JSON.stringify({
                 type: 'join',
@@ -81,6 +84,9 @@ const PlayPage = () => {
                         });
                     });
                     setUsers(userMap);
+                    console.log("space data = ", data.payload.space)
+                    setSpace(data.payload.space)
+                    console.log("space state data = ", space)
                     break;
                 }
 
@@ -157,15 +163,19 @@ const PlayPage = () => {
 
             switch (e.key) {
                 case 'ArrowUp':
+                case 'w':
                     newY--;
                     break;
                 case 'ArrowDown':
+                case 's':
                     newY++;
                     break;
                 case 'ArrowLeft':
+                case 'a':
                     newX--;
                     break;
                 case 'ArrowRight':
+                case 'd':
                     newX++;
                     break;
                 default:
@@ -192,17 +202,18 @@ const PlayPage = () => {
     return (
         <div className="min-h-dvh bg-gray-50">
             {/* Top Bar */}
-            <div className="fixed top-0 left-0 right-0 bg-white border-b z-10">
-                <div className="flex items-center justify-between px-4 h-16">
+            <aside className="fixed top-0 left-0 bottom-0 border-b z-10 pointer-events-auto flex h-full w-[48px] flex-col border-r border-gray-200 bg-gray-50">
+                <section className="flex flex-col items-center w-full pb-[10px] pt-[16px]">
+                    <button><AlignJustify className="w-5 h-5" /></button>
                     <button
                         onClick={handleBack}
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
                     >
                         <ArrowLeft className="w-5 h-5" />
-                        Back to Spaces
+                        Back
                     </button>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-center gap-4">
                         <button
                             onClick={() => setShowUsers(!showUsers)}
                             className="p-2 hover:bg-gray-100 rounded-full"
@@ -216,15 +227,13 @@ const PlayPage = () => {
                             <Settings className="w-5 h-5" />
                         </button>
                     </div>
-                </div>
-            </div>
+                </section>
+            </aside>
+            <div className="fixed top-16 right-0 w-80 h-[calc(100vh-4rem)] bg-white border-l shadow-lg"></div>
 
             {/* Game Area */}
             <div className="pt-16 px-4">
-                <div
-                    className="relative w-full h-[calc(100vh-4rem)] bg-white rounded-lg border"
-                    style={{ cursor: 'move' }}
-                >
+                <div className="relative w-full h-[100vh] bg-black rounded-lg border border-gray-700 overflow-hidden cursor-move">
                     {/* Current User */}
                     <div
                         className="absolute w-8 h-8 bg-purple-600 rounded-full transition-all duration-200 ease-in-out"
@@ -232,6 +241,7 @@ const PlayPage = () => {
                             transform: `translate(${position.x * TILE_SIZE}px, ${position.y * TILE_SIZE}px)`
                         }}
                     />
+                    <PlayMap size={{ width: 100, height: 100 }} />
 
                     {/* Other Users */}
                     {Array.from(users.values()).map((user) => (

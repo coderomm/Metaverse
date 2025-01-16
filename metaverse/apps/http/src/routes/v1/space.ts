@@ -30,13 +30,15 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
         }, select: {
             mapElements: true,
             width: true,
-            height: true
+            height: true,
+            thumbnail: true
         }
     })
     if (!map) {
         res.status(400).json({ message: "Map not found" })
         return
     }
+
     let space = await client.$transaction(async () => {
         const space = await client.space.create({
             data: {
@@ -44,6 +46,8 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
                 width: map.width,
                 height: map.height,
                 creatorId: req.userId!,
+                mapId: parsedData.data.mapId,
+                thumbnail: map.thumbnail
             }
         });
 
@@ -55,9 +59,7 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
                 y: e.y!
             }))
         })
-
         return space;
-
     })
     res.json({ spaceId: space.id })
 })
@@ -156,6 +158,7 @@ spaceRouter.post("/element", userMiddleware, async (req, res) => {
         res.status(400).json({ message: "Space not found" })
         return
     }
+
     await client.spaceElements.create({
         data: {
             spaceId: req.body.spaceId,
@@ -164,7 +167,6 @@ spaceRouter.post("/element", userMiddleware, async (req, res) => {
             y: req.body.y
         }
     })
-
     res.json({ message: "Element added" })
 })
 
@@ -179,6 +181,7 @@ spaceRouter.get("/:spaceId", async (req, res) => {
                     element: true
                 }
             },
+            map: true
         }
     })
 
