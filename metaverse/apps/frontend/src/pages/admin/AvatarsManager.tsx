@@ -1,6 +1,6 @@
 // src/pages/admin/AdminElementManager.tsx
 import { useState, useEffect, useCallback } from 'react';
-import { Avatar, CreateAvatarData, GetAvatarsResponse } from '../../types';
+import { Avatar, CreateAvatarData, GetAvatarsResponse } from '../../utils/types';
 import { api } from '../../services/api';
 import { AxiosError } from 'axios';
 import { AvatarForm } from '../../components/admin/AvatarForm';

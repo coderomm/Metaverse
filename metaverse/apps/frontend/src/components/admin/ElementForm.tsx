@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CreateElementData, UpdateElementData } from '../../types';
+import { CreateElementData, UpdateElementData } from '../../utils/types';
 
 interface ElementFormProps {
   initialData?: CreateElementData;

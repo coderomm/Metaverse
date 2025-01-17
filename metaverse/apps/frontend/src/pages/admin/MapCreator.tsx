@@ -3,7 +3,7 @@ import { Plus, X, Upload } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
-import { MapCreateFormData, MapElement } from '../../types';
+import { MapCreateFormData, MapElement } from '../../utils/types';
 
 type ElementData = {
   id: string;

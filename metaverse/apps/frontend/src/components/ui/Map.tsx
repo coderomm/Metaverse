@@ -1,67 +1,91 @@
 // interface MapProps {
-//     size: number;
+//   width: number;
+//   height: number;
 // }
 
-// const spaceObjects = ['🪐', '🌟', '☄️', '🌠', '🌑'];
+// // const spaceObjects = ['🪐', '🌑'];
 
-// export default function Map({ size }: MapProps) {
-//     const grid = Array(size).fill(null).map(() => Array(size).fill(null));
+// export default function Map({ width, height }: MapProps) {
+//   const grid = Array(height).fill(null).map(() => Array(width).fill(null));
+//   // for (let i = 0; i < width * height * 2; i++) {
+//   //   const x = Math.floor(Math.random() * width);
+//   //   const y = Math.floor(Math.random() * height);
+//   //   grid[y][x] = spaceObjects[Math.floor(Math.random() * spaceObjects.length)];
+//   // }
 
-//     // Randomly place space objects
-//     for (let i = 0; i < size * 2; i++) {
-//         const x = Math.floor(Math.random() * size);
-//         const y = Math.floor(Math.random() * size);
-//         grid[y][x] = spaceObjects[Math.floor(Math.random() * spaceObjects.length)];
-//     }
-
-//     return (
-//         <div
-//             className="grid gap-1 p-1 bg-gray-900 rounded-lg"
-//             style={{
-//                 gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
-//                 width: `${size * 40}px`,
-//                 height: `${size * 40}px`
-//             }}
-//         >
-//             {grid.flat().map((cell, index) => (
-//                 <div key={index} className="flex items-center justify-center w-8 h-8 bg-gray-800 rounded">
-//                     {cell}
-//                 </div>
-//             ))}
+//   return (
+//     <div
+//       className="grid gap-1 p-1 bg-gray-900 rounded-lg"
+//       style={{
+//         gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
+//         width: `${width * 40}px`,
+//         height: `${height * 40}px`
+//       }}
+//     >
+//       {grid.flat().map((cell, index) => (
+//         <div key={index} className="flex items-center justify-center w-8 h-8 bg-gray-800 rounded">
+//           {cell}{index + 1}
 //         </div>
-//     );
+//       ))}
+//     </div>
+//   );
 // }
 
+// ========================================================================================================================================================================================================================================
+
+
+// Map.tsx
+import { useEffect, useState } from 'react';
 
 interface MapProps {
-  size: { width: number; height: number };
+  width: number;
+  height: number;
+  playerPosition: { x: number; y: number };
 }
 
-const spaceObjects = ['🪐', '🌟', '☄️', '🌠', '🌑'];
+export default function PlayMap({ width, height, playerPosition }: MapProps) {
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
+  const TILE_SIZE = 32;
+  const VIEWPORT_WIDTH = window.innerWidth - 48; // Accounting for sidebar
+  const VIEWPORT_HEIGHT = window.innerHeight;
 
-export default function PlayMap({ size }: MapProps) {
-  const grid = Array(size.height).fill(null).map(() => Array(size.width).fill(null));
+  useEffect(() => {
+    // Center the map on the player
+    const centerX = (VIEWPORT_WIDTH / 2) - (playerPosition.x * TILE_SIZE);
+    const centerY = (VIEWPORT_HEIGHT / 2) - (playerPosition.y * TILE_SIZE);
 
-  // Randomly place space objects
-  for (let i = 0; i < size.width * size.height / 50; i++) {
-    const x = Math.floor(Math.random() * size.width);
-    const y = Math.floor(Math.random() * size.height);
-    grid[y][x] = spaceObjects[Math.floor(Math.random() * spaceObjects.length)];
-  }
+    setMapOffset({ x: centerX, y: centerY });
+  }, [playerPosition]);
 
   return (
-    <div 
-      className="absolute inset-0 grid gap-1 p-1"
-      style={{ 
-        gridTemplateColumns: `repeat(${size.width}, minmax(0, 1fr))`,
-        gridTemplateRows: `repeat(${size.height}, minmax(0, 1fr))`,
-      }}
-    >
-      {grid.flat().map((cell, index) => (
-        <div key={index} className="flex items-center justify-center">
-          {cell}
+    <div className="fixed inset-0 overflow-hidden">
+      <div
+        className="absolute transition-transform duration-200"
+        style={{
+          transform: `translate(${mapOffset.x}px, ${mapOffset.y}px)`,
+          width: `${width * TILE_SIZE}px`,
+          height: `${height * TILE_SIZE}px`,
+        }}
+      >
+        <div className="grid gap-0.5"
+          style={{
+            gridTemplateColumns: `repeat(${width}, ${TILE_SIZE}px)`,
+            width: '100%',
+            height: '100%'
+          }}
+        >
+          {Array(width * height).fill(null).map((_, index) => (
+            <div
+              key={index}
+              className="bg-gray-800/50 border border-white text-white"
+              style={{
+                width: TILE_SIZE,
+                height: TILE_SIZE
+              }}
+            >{index}</div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }

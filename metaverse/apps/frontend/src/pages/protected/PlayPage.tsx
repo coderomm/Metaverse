@@ -4,9 +4,11 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ArrowLeft, Users, MessageCircle, Settings, X, AlignJustify } from 'lucide-react';
 import { toast } from 'sonner';
-import PlayMap from '../../components/ui/Map';
+// import PlayMap from '../../components/ui/Map';
+// import Avatar from '../../components/ui/Avatar';
+import { ArenaMap } from '../../components/ui/ArenaMap';
 
-const TILE_SIZE = 32;    // Size of each movement tile
+// const TILE_SIZE = 32;    // Size of each movement tile
 const COLORS = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
     '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#1ABC9C'
@@ -37,7 +39,15 @@ const PlayPage = () => {
         name: string,
         thumbnail?: string,
         width: number
-    }>()
+    }>({
+        creatorId: '',
+        height: 0,
+        id: '',
+        mapId: '',
+        name: '',
+        thumbnail: '',
+        width: 0
+    })
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -232,29 +242,39 @@ const PlayPage = () => {
             <div className="fixed top-16 right-0 w-80 h-[calc(100vh-4rem)] bg-white border-l shadow-lg"></div>
 
             {/* Game Area */}
-            <div className="pt-16 px-4">
-                <div className="relative w-full h-[100vh] bg-black rounded-lg border border-gray-700 overflow-hidden cursor-move">
-                    {/* Current User */}
+            <div className="relative w-[calc(100%-48px)] h-screen bg-black border border-gray-700 overflow-hidden cursor-move ms-[48px]">
+                {/* Current User */}
+                {/* <div
+                    className="absolute w-8 h-8 bg-purple-600 rounded-full transition-all duration-200 ease-in-out"
+                    style={{
+                        transform: `translate(${position.x * TILE_SIZE}px, ${position.y * TILE_SIZE}px)`
+                    }}
+                /> */}
+                {/* <PlayMap
+                    width={space.width || 100}
+                    height={space.height || 100}
+                    playerPosition={position}
+                />
+                <Avatar /> */}
+
+                <ArenaMap
+                    width={space.width || 100}
+                    height={space.height || 100}
+                    playerPosition={position}
+                    users={users}
+                />
+
+                {/* Other Users */}
+                {/* {Array.from(users.values()).map((user) => (
                     <div
-                        className="absolute w-8 h-8 bg-purple-600 rounded-full transition-all duration-200 ease-in-out"
+                        key={user.id}
+                        className="absolute w-8 h-8 rounded-full transition-all duration-200 ease-in-out"
                         style={{
-                            transform: `translate(${position.x * TILE_SIZE}px, ${position.y * TILE_SIZE}px)`
+                            transform: `translate(${user.x * TILE_SIZE}px, ${user.y * TILE_SIZE}px)`,
+                            backgroundColor: user.color
                         }}
                     />
-                    <PlayMap size={{ width: 100, height: 100 }} />
-
-                    {/* Other Users */}
-                    {Array.from(users.values()).map((user) => (
-                        <div
-                            key={user.id}
-                            className="absolute w-8 h-8 rounded-full transition-all duration-200 ease-in-out"
-                            style={{
-                                transform: `translate(${user.x * TILE_SIZE}px, ${user.y * TILE_SIZE}px)`,
-                                backgroundColor: user.color
-                            }}
-                        />
-                    ))}
-                </div>
+                ))} */}
             </div>
 
             {/* Users Sidebar */}

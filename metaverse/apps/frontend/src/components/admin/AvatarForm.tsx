@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CreateAvatarData } from '../../types';
+import { CreateAvatarData } from '../../utils/types';
 
 interface ElementFormProps {
     onSubmit: (data: CreateAvatarData) => Promise<void>;

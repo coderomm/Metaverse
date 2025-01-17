@@ -1,6 +1,6 @@
 // src/pages/auth/SigninPage.tsx
 import { useState } from 'react';
-import { SigninSchema, SigninInput } from '../../types';
+import { SigninSchema, SigninInput } from '../../utils/types';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AxiosError } from 'axios';

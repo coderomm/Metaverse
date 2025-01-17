@@ -1,6 +1,6 @@
 // src/services/api.ts
 import axios, { AxiosError } from 'axios';
-import { SignupInput, SigninInput } from '../types';
+import { SignupInput, SigninInput } from '../utils/types';
 import { toast } from 'sonner';
 
 const BACKEND_URL = 'http://localhost:3000/api/v1';

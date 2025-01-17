@@ -77,3 +77,25 @@ export interface MapCreateFormData {
 
 export type SignupInput = z.infer<typeof SignupSchema>;
 export type SigninInput = z.infer<typeof SigninSchema>;
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export interface UserRes {
+  id: string;
+  x: number;
+  y: number;
+  color?: string;
+}
+
+export interface SpaceData {
+  creatorId: string;
+  height: number;
+  id: string;
+  mapId?: string;
+  name: string;
+  thumbnail?: string;
+  width: number;
+}

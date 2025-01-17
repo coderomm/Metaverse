@@ -1,6 +1,6 @@
 // src/pages/admin/AdminElementManager.tsx
 import { useState, useEffect, useCallback } from 'react';
-import { Element, CreateElementData, UpdateElementData, GetElementsResponse } from '../../types';
+import { Element, CreateElementData, UpdateElementData, GetElementsResponse } from '../../utils/types';
 import { api } from '../../services/api';
 import { ElementForm } from '../../components/admin/ElementForm';
 import { AxiosError } from 'axios';
