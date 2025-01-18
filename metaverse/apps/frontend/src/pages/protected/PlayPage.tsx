@@ -94,9 +94,7 @@ const PlayPage = () => {
                         });
                     });
                     setUsers(userMap);
-                    console.log("space data = ", data.payload.space)
                     setSpace(data.payload.space)
-                    console.log("space state data = ", space)
                     break;
                 }
 
@@ -149,7 +147,7 @@ const PlayPage = () => {
                 }
 
                 default:
-                    console.warn('Unhandled WebSocket message:', data);
+                    console.error('Unhandled WebSocket message:', data);
                     toast.info('Unhandled WebSocket message:' + data);
             }
         };
@@ -161,49 +159,54 @@ const PlayPage = () => {
         };
     }, [isAuthenticated, navigate, searchParams, token]);
 
-    // Handle keyboard movement
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!ws) return;
 
-            // let newX = position.x;
-            // let newY = position.y;
+            // Get the current position
             let newX = positionRef.current.x;
             let newY = positionRef.current.y;
 
+            // Calculate the new position based on the key pressed
             switch (e.key) {
                 case 'ArrowUp':
                 case 'w':
-                    newY--;
+                    if (newY > 0) newY--; // Prevent moving above the top boundary
                     break;
                 case 'ArrowDown':
                 case 's':
-                    newY++;
+                    if (newY < space.height - 1) newY++; // Prevent moving below the bottom boundary
                     break;
                 case 'ArrowLeft':
                 case 'a':
-                    newX--;
+                    if (newX > 0) newX--; // Prevent moving beyond the left boundary
                     break;
                 case 'ArrowRight':
                 case 'd':
-                    newX++;
+                    if (newX < space.width - 1) newX++; // Prevent moving beyond the right boundary
                     break;
                 default:
                     return;
             }
 
-            positionRef.current = { x: newX, y: newY };
-            setPosition({ x: newX, y: newY });
+            // Check if the position has changed
+            if (newX !== positionRef.current.x || newY !== positionRef.current.y) {
+                positionRef.current = { x: newX, y: newY };
+                setPosition({ x: newX, y: newY });
 
-            ws.send(JSON.stringify({
-                type: 'move',
-                payload: { x: newX, y: newY }
-            }));
+                // Send the updated position to the server
+                ws.send(
+                    JSON.stringify({
+                        type: 'move',
+                        payload: { x: newX, y: newY },
+                    })
+                );
+            }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [ws, position]);
+    }, [ws, space.height, space.width]);
 
     const handleBack = () => {
         navigate('/home/spaces');
@@ -243,38 +246,12 @@ const PlayPage = () => {
 
             {/* Game Area */}
             <div className="relative w-[calc(100%-48px)] h-screen bg-black border border-gray-700 overflow-hidden cursor-move ms-[48px]">
-                {/* Current User */}
-                {/* <div
-                    className="absolute w-8 h-8 bg-purple-600 rounded-full transition-all duration-200 ease-in-out"
-                    style={{
-                        transform: `translate(${position.x * TILE_SIZE}px, ${position.y * TILE_SIZE}px)`
-                    }}
-                /> */}
-                {/* <PlayMap
-                    width={space.width || 100}
-                    height={space.height || 100}
-                    playerPosition={position}
-                />
-                <Avatar /> */}
-
                 <ArenaMap
                     width={space.width || 100}
                     height={space.height || 100}
                     playerPosition={position}
                     users={users}
                 />
-
-                {/* Other Users */}
-                {/* {Array.from(users.values()).map((user) => (
-                    <div
-                        key={user.id}
-                        className="absolute w-8 h-8 rounded-full transition-all duration-200 ease-in-out"
-                        style={{
-                            transform: `translate(${user.x * TILE_SIZE}px, ${user.y * TILE_SIZE}px)`,
-                            backgroundColor: user.color
-                        }}
-                    />
-                ))} */}
             </div>
 
             {/* Users Sidebar */}

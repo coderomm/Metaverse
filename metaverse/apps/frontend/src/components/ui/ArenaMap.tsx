@@ -14,14 +14,14 @@ interface MapProps {
 export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
   const viewport = useViewport();
   const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
-  
+
   const calculateOffset = useCallback(() => {
     const mapWidth = width * TILE_SIZE;
     const mapHeight = height * TILE_SIZE;
-    
+
     let offsetX = viewport.width / 2 - playerPosition.x * TILE_SIZE;
     let offsetY = viewport.height / 2 - playerPosition.y * TILE_SIZE;
-    
+
     // Left boundary
     if (offsetX > 0) {
       offsetX = 0;
@@ -30,7 +30,7 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
     else if (offsetX < viewport.width - mapWidth) {
       offsetX = viewport.width - mapWidth;
     }
-    
+
     // Top boundary
     if (offsetY > 0) {
       offsetY = 0;
@@ -39,7 +39,7 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
     else if (offsetY < viewport.height - mapHeight) {
       offsetY = viewport.height - mapHeight;
     }
-    
+
     // If map is smaller than viewport, center it
     if (mapWidth < viewport.width) {
       offsetX = (viewport.width - mapWidth) / 2;
@@ -47,10 +47,10 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
     if (mapHeight < viewport.height) {
       offsetY = (viewport.height - mapHeight) / 2;
     }
-    
+
     return { x: offsetX, y: offsetY };
   }, [width, height, playerPosition, viewport]);
-  
+
   useEffect(() => {
     setMapOffset(calculateOffset());
   }, [calculateOffset]);
@@ -58,7 +58,7 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-900">
       {/* Map Container */}
-      <div 
+      <div
         className="absolute will-change-transform"
         style={{
           transform: `translate3d(${mapOffset.x}px, ${mapOffset.y}px, 0)`,
@@ -67,39 +67,40 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
         }}
       >
         {/* Grid */}
-        <div 
+        <div
           className="grid gap-px absolute inset-0"
           style={{
             gridTemplateColumns: `repeat(${width}, ${TILE_SIZE}px)`,
           }}
         >
           {Array(width * height).fill(null).map((_, index) => (
-            <div 
+            <div
               key={index}
               className="bg-gray-800/50 border border-gray-700/30 text-white/50">{index}</div>
           ))}
         </div>
 
         {/* Player */}
-        <div 
-          className="absolute will-change-transform"
+        <div
+          className="absolute will-change-transform transition-transform duration-300 ease-in-out"
+          data-X={playerPosition.x}
           style={{
             transform: `translate3d(${playerPosition.x * TILE_SIZE}px, ${playerPosition.y * TILE_SIZE}px, 0)`,
           }}
         >
-          <ArenaAvatar />
+          <ArenaAvatar emoji='💀' color='#ffffff' />
         </div>
 
         {/* Other Users */}
         {Array.from(users.values()).map((user) => (
           <div
             key={user.id}
-            className="absolute will-change-transform"
+            className="absolute will-change-transform transition-transform duration-300 ease-in-out"
             style={{
               transform: `translate3d(${user.x * TILE_SIZE}px, ${user.y * TILE_SIZE}px, 0)`,
             }}
           >
-            <ArenaAvatar emoji="👾" color={user.color} />
+            <ArenaAvatar emoji="🐵" color={user.color} />
           </div>
         ))}
       </div>
