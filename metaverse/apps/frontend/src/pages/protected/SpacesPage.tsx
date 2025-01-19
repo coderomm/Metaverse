@@ -8,6 +8,7 @@ import { CreateSpaceDialog } from '../../components/spaces/CreateSpaceDialog';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import StandingChar from './../../assets/images/map-templates/banner/full_char.png'
+import { JoinSpaceDialog } from '../../components/spaces/JoinSpaceDialog';
 
 interface Space {
   id: number;
@@ -23,6 +24,7 @@ interface SpacesResponse {
 export const SpacesPage = () => {
   const { isAuthenticated } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -67,7 +69,8 @@ export const SpacesPage = () => {
         <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center bg-white/80 backdrop-blur-md">
           <span className='text-[#27262e] font-bold cursor-pointer text-base'>My Spaces</span>
           <div className="sticky right-0 bottom-0 left-0 flex gap-2 justify-between items-center py-3 w-full lg:w-1/3">
-            <button className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] px-2 lg:px-6 py-2 w-full h-[48px] rounded-lg flex items-center justify-center'>Enter with Code</button>
+            <button className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] px-2 lg:px-6 py-2 w-full h-[48px] rounded-lg flex items-center justify-center' 
+            onClick={()=>setJoinDialogOpen(true)}>Enter with Code</button>
             <button
               onClick={() => setCreateDialogOpen(true)}
               className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 w-full h-[48px]"
@@ -130,6 +133,10 @@ export const SpacesPage = () => {
       <CreateSpaceDialog
         open={createDialogOpen}
         onClose={() => setCreateDialogOpen(false)}
+      />
+      <JoinSpaceDialog
+        open={joinDialogOpen}
+        onClose={() => setJoinDialogOpen(false)}
       />
     </div>
   );

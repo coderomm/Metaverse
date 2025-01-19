@@ -1,13 +1,19 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Position, UserRes } from '../../utils/types';
+import { UserRes } from '../../utils/types';
 import { useViewport } from '../../hooks/useViewport';
 import { TILE_SIZE } from '../../utils/constants';
 import { ArenaAvatar } from './ArenaAvatar';
 
+// interface MapProps {
+//   width: number;
+//   height: number;
+//   playerPosition: Position;
+//   users: Map<string, UserRes>;
+// }
 interface MapProps {
   width: number;
   height: number;
-  playerPosition: Position;
+  playerPosition: UserRes;  // Changed from Position to UserRes
   users: Map<string, UserRes>;
 }
 
@@ -83,7 +89,6 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
         {/* Player */}
         <div
           className="absolute will-change-transform transition-transform duration-300 ease-in-out"
-          data-X={playerPosition.x}
           style={{
             transform: `translate3d(${playerPosition.x * TILE_SIZE}px, ${playerPosition.y * TILE_SIZE}px, 0)`,
           }}

@@ -36,13 +36,14 @@ export class RoomManager {
 
     public broadcast(message: OutgoingMessage, user: User, roomId: string) {
         if (!roomId) {
-            console.error("Error: roomId is undefined in broadcast");
+            console.error(`Error: roomId is undefined in broadcast for user ${user.id}`);
             return;
         }
         console.log(`Broadcasting message to room ${roomId}, excluding user ${user.id}`);
         if (!this.rooms.has(roomId)) {
             return
         }
+        console.log(`Users in room ${roomId}: ${this.rooms.get(roomId)?.map((u) => u.id)}`);
         this.rooms.get(roomId)?.forEach((u) => {
             if (u.id !== user.id) {
                 console.log(`Sending message to user ${u.id}`);

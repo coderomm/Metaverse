@@ -35,13 +35,12 @@ export class User {
             const parsedData = JSON.parse(data.toString());
             switch (parsedData.type) {
                 case "join":
-                    console.log("Received join request:", parsedData);
                     const spaceId = parsedData.payload.spaceId;
                     const token = parsedData.payload.token;
                     try {
                         const userId = (jwt.verify(token, process.env.JWT_SECRET || 'someSuperSecretKey') as JwtPayload).userId
                         if (!userId) {
-                            console.log("Invalid token, closing WebSocket.");
+                            console.error("Invalid token, closing WebSocket.");
                             this.ws.close()
                             return
                         }
@@ -54,7 +53,7 @@ export class User {
                             }
                         })
                         if (!space) {
-                            console.log(`Space not found: ${spaceId}`);
+                            console.error(`Space not found: ${spaceId}`);
                             this.ws.close()
                             return
                         }
@@ -72,7 +71,8 @@ export class User {
                                     y: this.y
                                 },
                                 space: space,
-                                users: RoomManager.getInstance().rooms.get(spaceId)?.filter(x => x.id !== this.id)?.map((u) => ({ id: u.id })) ?? []
+                                users: RoomManager.getInstance().rooms.get(spaceId)?.filter(x => x.id != this.id).map((u) => ({ id: u.id })) ?? [],
+                                userId: this.userId
                             }
                         })
                         RoomManager.getInstance().broadcast({
@@ -94,10 +94,8 @@ export class User {
                     const moveY = parsedData.payload.y
                     const xDisplacement = Math.abs(this.x - moveX)
                     const yDisplacement = Math.abs(this.y - moveY)
-                    console.log('moveX - ', moveX)
-                    console.log('moveY - ', moveY)
-                    console.log('xDisplacement - ', xDisplacement)
-                    console.log('yDisplacement - ', yDisplacement)
+                    console.log(`For user with this Id = ${this.userId}, moveX is ${moveX}`)
+                    console.log(`For user with this Id = ${this.userId}, moveY is ${moveY}`)
                     const space = await client.space.findFirst({
                         where: {
                             id: this.spaceId
@@ -106,7 +104,7 @@ export class User {
                         }
                     })
                     if (!space) {
-                        console.log(`Space not found: ${spaceId}`);
+                        console.error(`Space not found: ${spaceId}`);
                         this.ws.close()
                         return
                     }
@@ -118,23 +116,30 @@ export class User {
                             payload: {
                                 x: this.x,
                                 y: this.y
-                            }
+                            },
+                            userId: this.userId
                         }, this, this.spaceId!)
-                        console.log('Inside this - ')
                         return
                     }
+                    console.log(`movement-rejected for ${this.userId} user`)
                     this.send({
                         type: "movement-rejected",
                         payload: {
                             x: this.x,
                             y: this.y
-                        }
+                        },
+                        userId: this.userId
                     });
             }
         })
     }
 
     destroy() {
+        console.log(`Destroying user ${this.id}. spaceId: ${this.spaceId}`);
+        if (!this.spaceId) {
+            console.warn(`Destroy called for user ${this.id} but spaceId is undefined.`);
+            return;
+        }
         RoomManager.getInstance().broadcast({
             type: "user-left",
             payload: {
