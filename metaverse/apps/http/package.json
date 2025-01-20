@@ -16,6 +16,7 @@
     "@dicebear/core": "^9.2.2",
     "@repo/avatar-generate": "*",
     "@repo/db": "*",
+    "@repo/auth": "*",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
