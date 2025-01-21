@@ -1,4 +1,4 @@
-import { GoogleAuthService } from './../../../../../packages/auth/src/google';
+import { GoogleAuthService } from '@repo/auth/google';
 import client from '@repo/db/client';
 import { Router } from 'express';
 

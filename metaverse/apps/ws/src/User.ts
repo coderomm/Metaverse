@@ -58,11 +58,11 @@ export class User {
                             return
                         }
                         this.spaceId = spaceId
-                        console.log(`Adding user ${this.id} to space ${spaceId}`);
+                        console.log(`1 Adding user ${this.id} to space ${spaceId}`);
                         RoomManager.getInstance().addUser(spaceId, this)
                         this.x = Math.floor(Math.random() * space?.width)
                         this.y = Math.floor(Math.random() * space?.height)
-                        console.log(`User spawn coordinates: (${this.x}, ${this.y})`);
+                        console.log(`2 User spawn coordinates: (${this.x}, ${this.y})`);
                         this.send({
                             type: "space-joined",
                             payload: {
@@ -71,7 +71,7 @@ export class User {
                                     y: this.y
                                 },
                                 space: space,
-                                users: RoomManager.getInstance().rooms.get(spaceId)?.filter(x => x.id != this.id).map((u) => ({ id: u.id })) ?? [],
+                                users: RoomManager.getInstance().rooms.get(spaceId)?.filter(x => x.id != this.id).map((u) => ({ id: u.id, userId: u.userId })) ?? [],
                                 userId: this.userId
                             }
                         })
@@ -94,8 +94,7 @@ export class User {
                     const moveY = parsedData.payload.y
                     const xDisplacement = Math.abs(this.x - moveX)
                     const yDisplacement = Math.abs(this.y - moveY)
-                    console.log(`For user with this Id = ${this.userId}, moveX is ${moveX}`)
-                    console.log(`For user with this Id = ${this.userId}, moveY is ${moveY}`)
+                    console.log(`User ${this.userId}, moveX is ${moveX} & moveY is ${moveY} `)
                     const space = await client.space.findFirst({
                         where: {
                             id: this.spaceId
@@ -104,7 +103,7 @@ export class User {
                         }
                     })
                     if (!space) {
-                        console.error(`Space not found: ${spaceId}`);
+                        console.error(`Space not found: ${spaceId} `);
                         this.ws.close()
                         return
                     }
@@ -121,7 +120,7 @@ export class User {
                         }, this, this.spaceId!)
                         return
                     }
-                    console.log(`movement-rejected for ${this.userId} user`)
+                    console.log(`movement - rejected for ${this.userId} user`)
                     this.send({
                         type: "movement-rejected",
                         payload: {
@@ -135,18 +134,19 @@ export class User {
     }
 
     destroy() {
-        console.log(`Destroying user ${this.id}. spaceId: ${this.spaceId}`);
+        console.log(`Destroying user ${this.id}.spaceId: ${this.spaceId} `);
         if (!this.spaceId) {
             console.warn(`Destroy called for user ${this.id} but spaceId is undefined.`);
             return;
         }
+        RoomManager.getInstance().removeUser(this, this.spaceId!);
         RoomManager.getInstance().broadcast({
             type: "user-left",
             payload: {
-                userId: this.userId
+                userId: this.userId,
+                connectionId: this.id,
             }
         }, this, this.spaceId!)
-        RoomManager.getInstance().removeUser(this, this.spaceId!);
     }
     send(payload: OutgoingMessage) {
         this.ws.send(JSON.stringify(payload));

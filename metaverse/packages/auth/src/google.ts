@@ -41,6 +41,8 @@ export class GoogleAuthService {
             url: 'https://www.googleapis.com/oauth2/v2/userinfo'
         });
 
+        console.log('G-Aauth userinfo = ', userinfo)
+
         // Find or create user
         const user = await this.db.user.upsert({
             where: { email: userinfo.data.email },
