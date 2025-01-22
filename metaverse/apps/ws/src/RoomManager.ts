@@ -30,6 +30,7 @@ export class RoomManager {
             return;
         }
         const existingUsers = this.rooms.get(spaceId) ?? [];
+        console.log('existingUsers = ', existingUsers)
         const isAlreadyConnected = existingUsers.some((u) => u.userId === user.userId || u.id === user.id);
         console.log('isAlreadyConnected = ', isAlreadyConnected)
         if (!isAlreadyConnected) {
@@ -49,7 +50,6 @@ export class RoomManager {
         }
         this.rooms.get(roomId)?.forEach((u) => {
             if (u.id !== user.id) {
-                console.log(`4 Sending message to user ${u.id}`);
                 u.send(message)
             }
         })

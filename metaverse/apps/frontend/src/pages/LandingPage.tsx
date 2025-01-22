@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import landingBanner from '../assets/images/home/landingBanner.png'
 
 export const LandingPage: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -24,6 +25,7 @@ export const LandingPage: React.FC = () => {
         <p className="mt-4 text-xl text-gray-600">
           Join our community and explore the endless possibilities of the metaverse.
         </p>
+        <img src={landingBanner} className='mt-12 max-w-[80%] mx-auto rounded-full'/>
       </div>
     </div>
   );

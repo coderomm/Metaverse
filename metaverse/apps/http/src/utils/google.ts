@@ -1,12 +1,13 @@
-// packages/auth/src/google.ts
+import client from '@repo/db/client';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
+import { compare, hash } from "./scrypt";
+import { generateRandomPassword } from './generateRandomPassword';
 
 export class GoogleAuthService {
     private oauth2Client: OAuth2Client;
 
     constructor(
-        private readonly db: any,
         private readonly jwtSecret: string,
         private readonly config: {
             clientId: string;
@@ -37,24 +38,35 @@ export class GoogleAuthService {
         this.oauth2Client.setCredentials(tokens);
 
         // Get user info
-        const userinfo: any = await this.oauth2Client.request({
+        const userinfoResponse: any = await this.oauth2Client.request({
             url: 'https://www.googleapis.com/oauth2/v2/userinfo'
         });
 
+        const userinfo = userinfoResponse.data as {
+            id: string;
+            email: string;
+            name: string;
+            picture: string;
+        };
+
         console.log('G-Aauth userinfo = ', userinfo)
 
-        // Find or create user
-        const user = await this.db.user.upsert({
-            where: { email: userinfo.data.email },
+        const randomPassword: string = generateRandomPassword(16);
+        const hashedPassword = await hash(randomPassword);
+
+        const user = await client.user.upsert({
+            where: { email: userinfo.email },
             update: {
-                name: userinfo.data.name,
-                picture: userinfo.data.picture
+                name: userinfo.name,
+                picture: userinfo.picture
             },
             create: {
-                email: userinfo.data.email,
-                name: userinfo.data.name,
-                picture: userinfo.data.picture,
-                googleId: userinfo.data.id
+                email: userinfo.email,
+                name: userinfo.name,
+                picture: userinfo.picture,
+                googleId: userinfo.id,
+                password: hashedPassword,
+                role: 'User'
             }
         });
 

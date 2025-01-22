@@ -5,6 +5,9 @@ import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
+import { TextInput } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
+import googleSymbol from '../../assets/images/light/signin/google_symbol.png'
 
 export const SigninPage = () => {
   const { login } = useAuth();
@@ -31,46 +34,54 @@ export const SigninPage = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = '/api/v1/auth/google';
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900">Sign in to Meety</h2>
-        </div>
+      <div className="max-w-md w-full py-20 px-5 bg-white rounded-xl flex flex-col gap-[10px] items-center authcard">
+        <h2 className="text-center text-2xl lg:text-4xl font-bold text-[#6758ff] mb-10">Meety</h2>
         {error && <div className="text-red-600 text-center">{error}</div>}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <input
+        <button onClick={handleGoogleLogin} className='cursor-pointer rounded-[8px] py-[10px] px-[16px] select-none w-full h-[40px] md:h-[48px] border border-solid !border-gray-400 hover:bg-gray-50 flex items-center justify-center'>
+          <div className="flex items-center justify-center gap-[6px]">
+            <img className="w-[16px] h-[16px] md:w-[18px] md:h-[18px]" src={googleSymbol} alt="google" />
+            <span className="text-body-1 text-gray-700 text-center font-semibold leading-[140%] md:text-subtitle truncate">Sign in with Google</span>
+          </div>
+        </button>
+        <span className="text-caption-1 font-semibold text-gray-500">or</span>
+        <form className="flex flex-col gap-[10px] items-start w-full" onSubmit={handleSubmit}>
+          <div className='w-full'>
+            <TextInput
               type="email"
               required
               placeholder="Email"
+              label="Email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
             />
           </div>
-          <div>
-            <input
+          <div className='w-full'>
+            <TextInput
               type="password"
               required
               placeholder="Password"
+              label="Password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
             />
           </div>
-          <div>
-            <button
+          <div className='w-full'>
+            <Button
               type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
+              loading={loading}
+              loadingLabel='Signing in...'
+              label='Sign in'
+            />
           </div>
         </form>
-        <div className="flex items-center justify-center text-center">Do not have an account ?
-          <Link to="/signup" className="text-gray-700 hover:text-gray-900 ms-1">Sign Up</Link>
+        <div className="flex items-center justify-center text-center text-gray-500">Do not have an account ?
+          <Link to="/accounts/signup" className="text-gray-600 hover:text-gray-900 ms-1">Sign Up</Link>
         </div>
       </div>
     </div>

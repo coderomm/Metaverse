@@ -44,6 +44,7 @@ export class User {
                             this.ws.close()
                             return
                         }
+                        this.id = userId
                         this.userId = userId
                         const space = await client.space.findFirst({
                             where: {

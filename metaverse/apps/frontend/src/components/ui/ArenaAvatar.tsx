@@ -1,6 +1,5 @@
 import { TILE_SIZE } from "../../utils/constants";
 
-// components/Avatar.tsx
 interface AvatarProps {
     emoji?: string;
     color?: string;

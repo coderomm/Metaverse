@@ -1,4 +1,3 @@
-// ArenaMap.tsx
 import React from 'react';
 import { Position, UserRes } from '../../utils/types';
 import { useViewport } from '../../hooks/useViewport';
@@ -12,7 +11,6 @@ interface MapProps {
     users: Map<string, UserRes>;
 }
 
-// Create grid cells array once
 const createGridCells = (width: number, height: number) => 
     Array.from({ length: width * height }, (_, index) => ({
         id: `cell-${index}`,
@@ -30,11 +28,9 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
         let offsetX = viewport.width / 2 - playerPosition.x * TILE_SIZE;
         let offsetY = viewport.height / 2 - playerPosition.y * TILE_SIZE;
 
-        // Boundary calculations
         offsetX = Math.min(0, Math.max(viewport.width - mapWidth, offsetX));
         offsetY = Math.min(0, Math.max(viewport.height - mapHeight, offsetY));
 
-        // Center if map is smaller than viewport
         if (mapWidth < viewport.width) {
             offsetX = (viewport.width - mapWidth) / 2;
         }
@@ -49,7 +45,6 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
         setMapOffset(calculateOffset());
     }, [calculateOffset]);
 
-    // Create grid cells
     const gridCells = React.useMemo(() => createGridCells(width, height), [width, height]);
 
     const MemoizedArenaAvatar = React.memo(ArenaAvatar);
@@ -57,7 +52,7 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
     return (
         <div className="fixed inset-0 overflow-hidden bg-gray-900">
             <div
-                className="absolute will-change-transform"
+                className="absolute will-change-transform transition-transform duration-200 ease-in-out"
                 style={{
                     transform: `translate3d(${mapOffset.x}px, ${mapOffset.y}px, 0)`,
                     width: `${width * TILE_SIZE}px`,
@@ -83,7 +78,7 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
 
                 {/* Player */}
                 <div
-                    className="absolute will-change-transform"
+                    className="absolute will-change-transform transition-transform duration-200 ease-in-out"
                     style={{
                         transform: `translate3d(${playerPosition.x * TILE_SIZE}px, ${playerPosition.y * TILE_SIZE}px, 0)`,
                     }}
@@ -95,7 +90,7 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
                 {Array.from(users.entries()).map(([id, user]) => (
                     <div
                         key={`user-${id}`}
-                        className="absolute will-change-transform"
+                        className="absolute will-change-transform transition-transform duration-200 ease-in-out"
                         style={{
                             transform: `translate3d(${user.x * TILE_SIZE}px, ${user.y * TILE_SIZE}px, 0)`,
                         }}
@@ -108,5 +103,4 @@ export function ArenaMap({ width, height, playerPosition, users }: MapProps) {
     );
 }
 
-// Make sure to only memo the component after its definition
 export const MemoizedArenaMap = React.memo(ArenaMap);

@@ -92,8 +92,8 @@ export const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link to="/signin" className="text-gray-700 hover:text-gray-900 px-3 py-2">Sign In</Link>
-                <Link to="/signup" className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">Sign Up</Link>
+                <Link to="/accounts/signin" className="text-gray-700 hover:text-gray-900 px-3 py-2">Sign In</Link>
+                <Link to="/accounts/signup" className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">Sign Up</Link>
               </>
             )}
           </div>
