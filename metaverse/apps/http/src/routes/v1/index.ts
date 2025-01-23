@@ -9,6 +9,7 @@ import { SignupSchema, SigninSchema } from '../../schema-types';
 import jwt from "jsonwebtoken";
 import generateAvatar from '@repo/avatar-generate/generateAvatar'
 import rateLimit from "express-rate-limit";
+import { authRouter } from './auth';
 
 export const router = Router();
 
@@ -68,7 +69,7 @@ router.post('/signin', loginLimiter, async (req, res) => {
             return
         }
 
-        const isValid = await compare(parsedData.data.password, user.password)
+        const isValid = await compare(parsedData.data.password, user.password!)
 
         if (!isValid) {
             res.status(403).json({ message: "Invalid password" })
@@ -77,8 +78,9 @@ router.post('/signin', loginLimiter, async (req, res) => {
 
         const token = jwt.sign({
             userId: user.id,
+            email: user.email,
             role: user.role
-        }, process.env.JWT_SECRET || 'someSuperSecretKey');
+        }, process.env.JWT_SECRET || 'someSuperSecretKey', { expiresIn: '48h' });
 
         res.json({
             token,
@@ -155,3 +157,4 @@ router.get("/maps", async (req, res) => {
 router.use('/user', userRouter);
 router.use('/space', spaceRouter);
 router.use('/admin', adminRouter);
+router.use('/auth', authRouter);

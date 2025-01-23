@@ -19,12 +19,10 @@ authRouter.get('/google', (req, res) => {
 authRouter.get('/google/callback', async (req, res) => {
     try {
         const { user, token } = await googleAuth.handleCallback(req.query.code as string);
-        console.log('google user = ', user)
-        console.log('google token = ', token)
-
-        // Redirect to frontend with token
-        res.redirect(`/auth-callback?token=${token}`);
+        res.redirect(
+            `${process.env.FRONTEND_URL}/auth-callback?token=${encodeURIComponent(token)}`
+        );
     } catch (error) {
-        res.redirect('/account/login?error=Authentication failed');
+        res.redirect(`${process.env.FRONTEND_URL}/account/login?error=Authentication failed`);
     }
 });

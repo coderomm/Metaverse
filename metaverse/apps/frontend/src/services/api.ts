@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { SignupInput, SigninInput } from '../utils/types';
 import { toast } from 'sonner';
 
-const BACKEND_URL = 'http://localhost:3000/api/v1';
+const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api/v1`;
 
 export const api = axios.create({
   baseURL: BACKEND_URL,

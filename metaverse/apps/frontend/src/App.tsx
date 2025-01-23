@@ -13,6 +13,7 @@ import { Toaster } from 'sonner';
 import MapCreator from './pages/admin/MapCreator';
 import PlayPage from './pages/protected/PlayPage';
 import './global.css'
+import AuthCallback from './pages/auth/AuthCallback';
 
 export const App = () => (
   <Router>
@@ -22,48 +23,13 @@ export const App = () => (
         <Routes>
           <Route path="/accounts/signin" element={<SigninPage />} />
           <Route path="/accounts/signup" element={<SignupPage />} />
-          <Route
-            path="/home/spaces"
-            element={
-              <PrivateRoute>
-                <SpacesPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/element"
-            element={
-              <PrivateRoute>
-                <ElementsManager />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/avatar"
-            element={
-              <PrivateRoute>
-                <AvatarsManager />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/map"
-            element={
-              <PrivateRoute>
-                <MapCreator />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/auth-callback" element={<AuthCallback />} />
+          <Route path="/home/spaces" element={<PrivateRoute><SpacesPage /></PrivateRoute>} />
+          <Route path="/accounts/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+          <Route path="/admin/element" element={<PrivateRoute><ElementsManager /></PrivateRoute>} />
+          <Route path="/admin/avatar" element={<PrivateRoute><AvatarsManager /></PrivateRoute>} />
+          <Route path="/admin/map" element={<PrivateRoute><MapCreator /></PrivateRoute>} />
           <Route path="/play" element={<PlayPage />} />
-          {/* <Route path="/" element={<Navigate to="/home/spaces" />} /> */}
           <Route path="/" element={<LandingPage />} />
         </Routes>
       </Layout>

@@ -19,7 +19,7 @@ model User {
   name      String?
   picture   String?
   googleId  String?  @unique
-  password  String
+  password  String?
   avatarId  String?
   avatar    Avatar?  @relation(fields: [avatarId], references: [id])
   role      Role

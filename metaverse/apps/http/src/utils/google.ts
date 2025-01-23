@@ -3,6 +3,7 @@ import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import { compare, hash } from "./scrypt";
 import { generateRandomPassword } from './generateRandomPassword';
+import generateAvatar from '@repo/avatar-generate/generateAvatar';
 
 export class GoogleAuthService {
     private oauth2Client: OAuth2Client;
@@ -42,39 +43,47 @@ export class GoogleAuthService {
             url: 'https://www.googleapis.com/oauth2/v2/userinfo'
         });
 
-        const userinfo = userinfoResponse.data as {
+        const userInfo = userinfoResponse.data as {
             id: string;
             email: string;
             name: string;
             picture: string;
         };
 
-        console.log('G-Aauth userinfo = ', userinfo)
+        console.log('G-Aauth userinfo = ', userInfo)
 
         const randomPassword: string = generateRandomPassword(16);
         const hashedPassword = await hash(randomPassword);
 
+        const avatarRes = generateAvatar();
+        const avatar = await client.avatar.create({
+            data: {
+                imageUrl: avatarRes.url,
+                name: avatarRes.name
+            }
+        })
+
         const user = await client.user.upsert({
-            where: { email: userinfo.email },
+            where: { email: userInfo.email },
             update: {
-                name: userinfo.name,
-                picture: userinfo.picture
+                name: userInfo.name,
+                picture: userInfo.picture,
             },
             create: {
-                email: userinfo.email,
-                name: userinfo.name,
-                picture: userinfo.picture,
-                googleId: userinfo.id,
+                email: userInfo.email,
+                name: userInfo.name,
+                picture: userInfo.picture,
+                googleId: userInfo.id,
                 password: hashedPassword,
+                avatarId: avatar.id,
                 role: 'User'
             }
         });
 
-        // Generate JWT
         const token = jwt.sign(
-            { userId: user.id, email: user.email },
+            { userId: user.id, email: user.email, role: user.role },
             this.jwtSecret,
-            { expiresIn: '24h' }
+            { expiresIn: '48h' }
         );
 
         return { user, token };
