@@ -1,3 +1,5 @@
+import client from '@repo/db/client';
+import jwt from 'jsonwebtoken';
 import { Router } from 'express';
 import { GoogleAuthService } from '../../utils/google';
 
@@ -24,5 +26,55 @@ authRouter.get('/google/callback', async (req, res) => {
         );
     } catch (error) {
         res.redirect(`${process.env.FRONTEND_URL}/account/login?error=Authentication failed`);
+    }
+});
+
+authRouter.post('/validate-token', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            res.status(401).json({ message: 'Authorization header is missing or invalid' });
+            return;
+        }
+
+        const token = authHeader.split(' ')[1];
+
+        const decodedToken = jwt.verify(
+            token,
+            process.env.JWT_SECRET || 'someSuperSecretKey'
+        ) as { userId: string; email: string; role: string };
+
+        const user = await client.user.findUnique({
+            where: {
+                id: decodedToken.userId,
+            },
+            include: {
+                avatar: true,
+            },
+        });
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.json({
+            token,
+            user: {
+                email: user.email,
+                role: user.role,
+                avatarId: user.avatarId,
+                imageUrl: user.avatar?.imageUrl,
+            },
+        });
+    } catch (err: any) {
+        console.error(err);
+        if (err.name === 'TokenExpiredError') {
+            res.status(401).json({ message: 'Token has expired' });
+            return;
+        }
+        res.status(400).json({ message: 'Invalid token' });
+        return;
     }
 });

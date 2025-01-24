@@ -31,7 +31,7 @@ export const SpacesPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate('/account/login');
     }
   }, [isAuthenticated, navigate]);
 

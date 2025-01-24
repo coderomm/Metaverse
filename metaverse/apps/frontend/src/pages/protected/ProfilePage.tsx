@@ -21,7 +21,7 @@ export const ProfilePage = () => {
 
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('/login');
+            navigate('/account/login');
         }
     }, [isAuthenticated, navigate]);
 
