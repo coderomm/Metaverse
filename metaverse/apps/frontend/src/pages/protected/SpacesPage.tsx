@@ -56,7 +56,7 @@ export const SpacesPage = () => {
   };
 
   return (
-    <div className="min-h-dvh pb-10 pt-[70px]">
+    <div className="min-h-dvh pb-10 pt-16">
       <Section>
         <h1 className="text-4xl font-bold tracking-tight text-purple-600 sm:text-5xl lg:text-6xl">
           Welcome to Your Meety Space
@@ -66,7 +66,7 @@ export const SpacesPage = () => {
         </p>
       </Section>
       <Section>
-        <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center bg-white/80 backdrop-blur-md">
+        <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center bg-white/80 backdrop-blur-md mb-4">
           <span className='text-[#27262e] font-bold cursor-pointer text-base'>My Spaces</span>
           <div className="sticky right-0 bottom-0 left-0 flex gap-2 justify-between items-center py-3 w-full lg:w-1/3">
             <button className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] px-2 lg:px-6 py-2 w-full h-[48px] rounded-lg flex items-center justify-center' 

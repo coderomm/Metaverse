@@ -3,6 +3,12 @@ import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Section from '../../components/ui/Section';
+import { Button } from '../../components/ui/Button';
+import { TextInput } from '../../components/ui/TextInput';
+import { CircleCheck } from 'lucide-react';
+import { toast } from 'sonner';
+import SpinLoader from '../../components/ui/SpinLoader';
 
 interface Avatar {
     id: number;
@@ -11,13 +17,12 @@ interface Avatar {
 }
 
 export const ProfilePage = () => {
-    const [nickname, setNickname] = useState('');
     const [avatars, setAvatars] = useState<Avatar[]>([]);
     const [selectedAvatarId, setSelectedAvatarId] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, fetchCurrentUser, isLoading } = useAuth();
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -48,48 +53,44 @@ export const ProfilePage = () => {
             await api.post('/user/metadata', {
                 avatarId: selectedAvatarId,
             });
+            toast.success('Profile updated successfully!');
+            await fetchCurrentUser();
         } catch (error) {
-            console.error('Failed to save changes:', error);
+            console.error('Failed to update profile:', error);
+            toast.error('Failed to update profile.');
         } finally {
             setIsSaving(false);
         }
     };
 
+    if (isLoading) {
+        return <>
+            <div className="flex items-center justify-center h-[80vh]">
+                <SpinLoader />
+            </div>
+        </>
+    }
+
     return (
-        <div className="max-w-2xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-8">Profile Settings</h1>
+        <div className="min-h-screen pb-10 pt-16">
+            <Section className='min-h-dvh pb-10 pt-16'>
+                <h1 className="text-2xl font-bold mb-8">Profile Settings</h1>
 
-            <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nickname
-                    </label>
-                    <input
-                        type="text"
-                        value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Avatar
-                    </label>
-                    <input
+                <div className="space-y-6">
+                    <TextInput
                         type="text"
                         placeholder="Search avatars..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4"
+                        label='Select Avatar'
                     />
 
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-4">
                         {filteredAvatars.map(avatar => (
                             <div
                                 key={avatar.id}
                                 onClick={() => setSelectedAvatarId(avatar.id)}
-                                className={`cursor-pointer rounded-lg p-2 border-2 ${selectedAvatarId === avatar.id
+                                className={`cursor-pointer rounded-lg p-2 border-2 transition-all ease-in-out duration-100 ${selectedAvatarId === avatar.id
                                     ? 'border-purple-500'
                                     : 'border-transparent'
                                     }`}
@@ -98,6 +99,7 @@ export const ProfilePage = () => {
                                     src={avatar.imageUrl}
                                     alt={avatar.name}
                                     className="w-full h-auto rounded-lg"
+                                    loading='lazy'
                                 />
                                 <p className="text-sm text-center mt-1">{avatar.name}</p>
                             </div>
@@ -105,16 +107,18 @@ export const ProfilePage = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-end">
-                    <button
+                <div className="sticky bottom-0 p-2 flex items-center justify-center md:justify-end">
+                    <Button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md"
-                    >
-                        {isSaving ? 'Saving...' : 'Save Changes'}
-                    </button>
+                        loading={isSaving}
+                        loadingLabel='Saving...'
+                        label='Save Changes'
+                        className="w-full md:w-max shadow-lg drop-shadow-lg"
+                        icon={<CircleCheck className='w-5' />}
+                    />
                 </div>
-            </div>
-        </div>
+            </Section >
+        </div >
     );
 };

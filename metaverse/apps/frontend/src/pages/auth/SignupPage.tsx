@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { SignupInput, SignupSchema } from '../../utils/types';
 import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
-import { TextInput } from '../../components/ui/Input';
+import { TextInput } from '../../components/ui/TextInput';
 import { SelectInput } from '../../components/ui/SelectInput';
 import { Button } from '../../components/ui/Button';
 import googleSymbol from '../../assets/images/light/signin/google_symbol.png'

@@ -7,8 +7,8 @@ import { SpacesPage } from './pages/protected/SpacesPage';
 import { PrivateRoute } from './routes/PrivateRoute';
 import { LandingPage } from './pages/LandingPage';
 import { ProfilePage } from './pages/protected/ProfilePage';
-import { ElementsManager } from './pages/admin/ElementsManager';
-import { AvatarsManager } from './pages/admin/AvatarsManager';
+import { CreateElement } from './pages/admin/CreateElement';
+import { CreateAvatar } from './pages/admin/CreateAvatar';
 import { Toaster } from 'sonner';
 import MapCreator from './pages/admin/MapCreator';
 import PlayPage from './pages/protected/PlayPage';
@@ -26,8 +26,8 @@ export const App = () => (
           <Route path="/auth-callback" element={<AuthCallback />} />
           <Route path="/home/spaces" element={<PrivateRoute><SpacesPage /></PrivateRoute>} />
           <Route path="/accounts/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-          <Route path="/admin/element" element={<PrivateRoute><ElementsManager /></PrivateRoute>} />
-          <Route path="/admin/avatar" element={<PrivateRoute><AvatarsManager /></PrivateRoute>} />
+          <Route path="/admin/element" element={<PrivateRoute><CreateElement /></PrivateRoute>} />
+          <Route path="/admin/avatar" element={<PrivateRoute><CreateAvatar /></PrivateRoute>} />
           <Route path="/admin/map" element={<PrivateRoute><MapCreator /></PrivateRoute>} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/" element={<LandingPage />} />
