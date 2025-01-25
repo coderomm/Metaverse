@@ -6,8 +6,10 @@ import { AxiosError } from 'axios';
 import { AvatarForm } from '../../components/admin/AvatarForm';
 import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
+import Section from '../../components/ui/Section';
+import { Plus } from 'lucide-react';
 
-export function CreateAvatar() {
+export const CreateAvatar = () => {
     const [avatars, setAvatars] = useState<Avatar[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -75,17 +77,17 @@ export function CreateAvatar() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-10 pt-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Avatar Management</h1>
+        <div className="min-h-screen bg-white pb-10 pt-20">
+            <Section>
+                <div className="flex justify-between items-center mb-10">
+                    <h1 className="text-2xl font-bold">Avatar Management</h1>
                     {!showCreateForm && (
-                        <div className="sticky bottom-0 p-2 items-center justify-center md:justify-end w-full hidden xl:flex">
-                            <Button onClick={() => setShowCreateForm(true)} label='Create New Avatar' className='w-full md:w-max shadow-lg drop-shadow-lg' />
-                        </div>
+                        <Button onClick={() => setShowCreateForm(true)}
+                            label='Create New Avatar'
+                            className="hidden sm:flex w-max shadow-lg drop-shadow-lg"
+                            icon={<Plus className='w-5' />} />
                     )}
                 </div>
-
                 {error && (
                     <div className="mt-4 rounded-md bg-red-50 p-4">
                         <div className="flex">
@@ -138,19 +140,18 @@ export function CreateAvatar() {
                 )}
 
                 {!isLoading && avatars.length > 0 && (
-                    <div className="mt-8 bg-white shadow overflow-hidden sm:rounded-md">
-                        <ul className="divide-y divide-gray-200">
-                            {avatars.map((avatar) => (
-                                <li key={avatar.id} className="px-4 py-4 flex items-center justify-start gap-4 sm:px-6">
-                                    <img
-                                        src={avatar.imageUrl}
-                                        alt="Avatar preview"
-                                        className="h-10 w-10 rounded-md md:w-14 md:h-14"
-                                    />
-                                    <h4 className='text-base md:text-lg'>{avatar.name}</h4>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="grid grid-cols-3 lg:grid-cols-8 gap-4">
+                        {avatars.map((avatar) => (
+                            <div key={avatar.id} className="p-1 flex flex-col items-center justify-start gap-1 drop-shadow-md bg-white rounded-lg cursor-pointer w-max transition-all duration-200 ease-in-out hover:drop-shadow-2xl hover:scale-[1.1]">
+                                <img
+                                    src={avatar.imageUrl}
+                                    alt={avatar.name}
+                                    className='w-20 rounded-md md:w-20 lg:w-24 lg:h-auto'
+                                    loading='lazy'
+                                />
+                                <h4 className='text-base md:text-lg'>{avatar.name}</h4>
+                            </div>
+                        ))}
                     </div>
                 )}
 
@@ -161,11 +162,14 @@ export function CreateAvatar() {
                 )}
 
                 {!showCreateForm && (
-                    <div className="sticky bottom-0 p-2 flex items-center justify-center md:justify-end w-full lg:hidden">
-                        <Button onClick={() => setShowCreateForm(true)} label='Create New Avatar' className='w-full md:w-max shadow-lg drop-shadow-lg' />
+                    <div className="sticky bottom-0 p-2 flex items-center justify-center sm:hidden">
+                        <Button onClick={() => setShowCreateForm(true)}
+                            label='Create New Avatar'
+                            className="w-full shadow-lg drop-shadow-lg mt-10"
+                            icon={<Plus className='w-5' />} />
                     </div>
                 )}
-            </div>
+            </Section>
         </div>
     );
 }

@@ -24,16 +24,11 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to={user?.email ? '/home/spaces' : '/'} className="flex items-center">
               <div className="w-auto px-6 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">Meety</span>
               </div>
             </Link>
-            <div className="hidden md:block ml-10">
-              <div className="flex items-center space-x-4">
-                <Link to="#" className="text-gray-700 hover:text-gray-900 px-3 py-2">About</Link>
-              </div>
-            </div>
           </div>
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
@@ -42,7 +37,6 @@ export const Navbar: React.FC = () => {
                   ref={dropdownRef}
                   className="relative group"
                   onClick={() => {
-                    // Only toggle dropdown on mobile
                     if (window.innerWidth < 1024) {
                       setIsDropdownOpen(!isDropdownOpen);
                     }

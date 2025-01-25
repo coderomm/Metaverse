@@ -72,9 +72,20 @@ export const ProfilePage = () => {
     }
 
     return (
-        <div className="min-h-screen pb-10 pt-16">
-            <Section className='min-h-dvh pb-10 pt-16'>
-                <h1 className="text-2xl font-bold mb-8">Profile Settings</h1>
+        <div className="min-h-screen bg-white pb-10 pt-20">
+            <Section>
+                <div className="flex justify-between items-center mb-10">
+                    <h1 className="text-2xl font-bold">Profile Settings</h1>
+                    <Button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        loading={isSaving}
+                        loadingLabel='Saving...'
+                        label='Save Changes'
+                        className="hidden sm:flex w-max shadow-lg drop-shadow-lg"
+                        icon={<CircleCheck className='w-5' />}
+                    />
+                </div>
 
                 <div className="space-y-6">
                     <TextInput
@@ -85,12 +96,12 @@ export const ProfilePage = () => {
                         label='Select Avatar'
                     />
 
-                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-4">
+                    <div className="grid justify-items-center grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                         {filteredAvatars.map(avatar => (
                             <div
                                 key={avatar.id}
                                 onClick={() => setSelectedAvatarId(avatar.id)}
-                                className={`cursor-pointer rounded-lg p-2 border-2 transition-all ease-in-out duration-100 ${selectedAvatarId === avatar.id
+                                className={`p-1 flex flex-col items-center justify-start gap-1 drop-shadow-md bg-white rounded-lg cursor-pointer w-max transition-all duration-200 ease-in-out hover:drop-shadow-2xl hover:scale-[1.1] border-[2px] ${selectedAvatarId === avatar.id
                                     ? 'border-purple-500'
                                     : 'border-transparent'
                                     }`}
@@ -98,23 +109,24 @@ export const ProfilePage = () => {
                                 <img
                                     src={avatar.imageUrl}
                                     alt={avatar.name}
-                                    className="w-full h-auto rounded-lg"
+                                    className='w-20 rounded-md md:w-20 lg:w-24 lg:h-auto'
                                     loading='lazy'
                                 />
-                                <p className="text-sm text-center mt-1">{avatar.name}</p>
+                                <h4 className='text-base md:text-lg'>{avatar.name}</h4>
                             </div>
+
                         ))}
                     </div>
                 </div>
 
-                <div className="sticky bottom-0 p-2 flex items-center justify-center md:justify-end">
+                <div className="sticky bottom-0 p-2 flex items-center justify-center sm:hidden">
                     <Button
                         onClick={handleSave}
                         disabled={isSaving}
                         loading={isSaving}
                         loadingLabel='Saving...'
                         label='Save Changes'
-                        className="w-full md:w-max shadow-lg drop-shadow-lg"
+                        className="w-full shadow-lg drop-shadow-lg mt-10"
                         icon={<CircleCheck className='w-5' />}
                     />
                 </div>

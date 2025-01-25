@@ -5,8 +5,10 @@ import { ElementForm } from '../../components/admin/ElementForm';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
+import Section from '../../components/ui/Section';
+import { Plus } from 'lucide-react';
 
-export function CreateElement() {
+export const CreateElement = () => {
   const [elements, setElements] = useState<Element[]>([]);
   const [selectedElement, setSelectedElement] = useState<Element | null>(null);
   const [showFormPopup, setShowFormPopup] = useState(false);
@@ -107,19 +109,18 @@ export function CreateElement() {
   }, [showFormPopup]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Element Management</h1>
-          <button
+    <div className="min-h-screen bg-white pb-10 pt-20">
+      <Section>
+        <div className="flex justify-between items-center mb-10">
+          <h1 className="text-2xl font-bold">Element Management</h1>
+          <Button
             onClick={() => {
               setSelectedElement(null);
               setShowFormPopup(true);
             }}
-            className="hidden md:inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-          >
-            Create New Element
-          </button>
+            label='Create New Element'
+            className="hidden sm:flex w-max shadow-lg drop-shadow-lg"
+            icon={<Plus className='w-5' />} />
         </div>
 
         {error && (
@@ -137,7 +138,7 @@ export function CreateElement() {
             {elements.map((element) => (
               <div
                 key={element.id}
-                className="bg-white shadow rounded-lg overflow-hidden"
+                className="p-1 flex flex-col items-center justify-start gap-1 drop-shadow-md bg-white rounded-lg cursor-pointer w-max transition-all duration-200 ease-in-out hover:drop-shadow-2xl"
               >
                 <div className="p-4 flex flex-col space-y-2">
                   <img
@@ -157,7 +158,7 @@ export function CreateElement() {
                         setSelectedElement(element);
                         setShowFormPopup(true);
                       }}
-                      className="text-purple-600 hover:text-purple-900 bg-white rounded-xl drop-shadow-lg px-5 py-1"
+                      className="text-purple-600 hover:text-purple-900 bg-white rounded-xl drop-shadow-lg px-5 py-1 active:scale-90 transition-all duration-200 ease-in-out"
                     >
                       Edit
                     </button>
@@ -228,16 +229,17 @@ export function CreateElement() {
           </div>
         )}
 
-        <div className="sticky bottom-0 p-2 flex items-center justify-center md:justify-end w-full lg:hidden">
+        <div className="sticky bottom-0 p-2 flex items-center justify-center sm:hidden">
           <Button
             onClick={() => {
               setSelectedElement(null);
               setShowFormPopup(true);
             }}
             label='Create New Element'
+            className="w-full shadow-lg drop-shadow-lg mt-10"
           />
         </div>
-      </div>
-    </div>
+      </Section>
+    </div >
   );
 }
