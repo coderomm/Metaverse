@@ -5,69 +5,90 @@ import { AddElementSchema, CreateSpaceSchema, DeleteElementSchema } from "../../
 export const spaceRouter = Router();
 
 spaceRouter.post("/", userMiddleware, async (req, res) => {
-    const parsedData = CreateSpaceSchema.safeParse(req.body)
+    const parsedData = CreateSpaceSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.status(400).json({ message: "Validation failed" })
-        return
-    }
-
-    if (!parsedData.data.mapId) {
-        const space = await client.space.create({
-            data: {
-                name: parsedData.data.name,
-                width: parseInt(parsedData.data.dimensions.split("x")[0]),
-                height: parseInt(parsedData.data.dimensions.split("x")[1]),
-                creatorId: req.userId!
-            }
-        });
-        res.json({ spaceId: space.id })
+        res.status(400).json({ message: "Validation failed" });
         return;
     }
 
-    const map = await client.map.findFirst({
-        where: {
-            id: parsedData.data.mapId
-        }, select: {
-            mapElements: true,
-            width: true,
-            height: true,
-            thumbnail: true
-        }
-    })
-    if (!map) {
-        res.status(400).json({ message: "Map not found" })
-        return
-    }
+    try {
+        let space;
 
-    let space = await client.$transaction(async () => {
-        const space = await client.space.create({
-            data: {
-                name: parsedData.data.name,
-                width: map.width,
-                height: map.height,
-                creatorId: req.userId!,
-                mapId: parsedData.data.mapId,
-                thumbnail: map.thumbnail
+        if (!parsedData.data.mapId) {
+            space = await client.space.create({
+                data: {
+                    name: parsedData.data.name,
+                    width: parseInt(parsedData.data.dimensions.split("x")[0]),
+                    height: parseInt(parsedData.data.dimensions.split("x")[1]),
+                    creatorId: req.userId!,
+                },
+            });
+        } else {
+            const map = await client.map.findFirst({
+                where: { id: parsedData.data.mapId },
+                select: {
+                    mapElements: true,
+                    width: true,
+                    height: true,
+                    thumbnail: true,
+                },
+            });
+
+            if (!map) {
+                res.status(400).json({ message: "Map not found" });
+                return;
             }
+
+            space = await client.$transaction(async () => {
+                const createdSpace = await client.space.create({
+                    data: {
+                        name: parsedData.data.name,
+                        width: map.width,
+                        height: map.height,
+                        creatorId: req.userId!,
+                        mapId: parsedData.data.mapId,
+                        thumbnail: map.thumbnail,
+                    },
+                });
+
+                await client.spaceElements.createMany({
+                    data: map.mapElements.map((e) => ({
+                        spaceId: createdSpace.id,
+                        elementId: e.elementId,
+                        x: e.x!,
+                        y: e.y!,
+                    })),
+                });
+
+                return createdSpace;
+            });
+        }
+
+        await client.recentVisitedSpace.upsert({
+            where: {
+                userId_spaceId: { userId: req.userId!, spaceId: space.id },
+            },
+            update: {
+                visitedAt: new Date(),
+            },
+            create: {
+                userId: req.userId!,
+                spaceId: space.id,
+            },
         });
 
-        await client.spaceElements.createMany({
-            data: map.mapElements.map(e => ({
-                spaceId: space.id,
-                elementId: e.elementId,
-                x: e.x!,
-                y: e.y!
-            }))
-        })
-        return space;
-    })
-    res.json({ spaceId: space.id })
-})
+        res.json({ spaceId: space.id });
+    } catch (error) {
+        console.error("Error creating space:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 spaceRouter.delete("/element", userMiddleware, async (req, res) => {
     const parsedData = DeleteElementSchema.safeParse(req.body)
     if (!parsedData.success) {
-        res.status(400).json({ message: "Validation failed" })
+        res.status(400).json({ message: "Invalid dimensions format" })
         return
     }
     const spaceElement = await client.spaceElements.findFirst({
@@ -170,39 +191,101 @@ spaceRouter.post("/element", userMiddleware, async (req, res) => {
     res.json({ message: "Element added" })
 })
 
-spaceRouter.get("/:spaceId", async (req, res) => {
-    const space = await client.space.findUnique({
-        where: {
-            id: req.params.spaceId
-        },
-        include: {
-            spaceElements: {
-                include: {
-                    element: true
-                }
+spaceRouter.get("/recent", userMiddleware, async (req, res) => {
+    try {
+        const recentSpaces = await client.recentVisitedSpace.findMany({
+            where: {
+                userId: req.userId!,
             },
-            map: true
+            include: {
+                space: {
+                    select: {
+                        id: true,
+                        name: true,
+                        thumbnail: true,
+                        width: true,
+                        height: true,
+                    },
+                },
+            },
+            orderBy: {
+                visitedAt: "desc",
+            },
+            take: 10,
+        });
+        if (recentSpaces.length === 0) {
+            res.json({ recentSpaces: [] });
+            return;
         }
-    })
-
-    if (!space) {
-        res.status(400).json({ message: "Space not found" })
-        return
+        const formattedSpaces = recentSpaces.map((recent) => ({
+            id: recent.space.id,
+            name: recent.space.name,
+            thumbnail: recent.space.thumbnail,
+            dimensions: `${recent.space.width}x${recent.space.height}`,
+            visitedAt: recent.visitedAt,
+        }));
+        res.json({
+            recentSpaces: formattedSpaces,
+        });
+    } catch (error) {
+        console.error("Error fetching recent spaces:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
+});
 
-    res.json({
-        "dimensions": `${space.width}x${space.height}`,
-        elements: space.spaceElements.map(e => ({
-            id: e.id,
-            element: {
-                id: e.element.id,
-                imageUrl: e.element.imageUrl,
-                width: e.element.width,
-                height: e.element.height,
-                static: e.element.static
+spaceRouter.get("/:spaceId", userMiddleware, async (req, res) => {
+    const { spaceId } = req.params;
+
+    try {
+        const space = await client.space.findUnique({
+            where: {
+                id: spaceId
             },
-            x: e.x,
-            y: e.y
-        })),
-    })
-})
+            include: {
+                spaceElements: {
+                    include: {
+                        element: true
+                    }
+                },
+                map: true
+            }
+        })
+
+        if (!space) {
+            res.status(400).json({ message: "Space not found" })
+            return
+        }
+
+        await client.recentVisitedSpace.upsert({
+            where: {
+                userId_spaceId: { userId: req.userId!, spaceId },
+            },
+            update: {
+                visitedAt: new Date(),
+            },
+            create: {
+                userId: req.userId!,
+                spaceId,
+            },
+        });
+
+        res.json({
+            "dimensions": `${space.width}x${space.height}`,
+            elements: space.spaceElements.map(e => ({
+                id: e.id,
+                element: {
+                    id: e.element.id,
+                    imageUrl: e.element.imageUrl,
+                    width: e.element.width,
+                    height: e.element.height,
+                    static: e.element.static
+                },
+                x: e.x,
+                y: e.y
+            })),
+        })
+    } catch (error) {
+        console.error("Error fetching space details:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});

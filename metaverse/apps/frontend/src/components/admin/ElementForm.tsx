@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CreateElementData, UpdateElementData } from '../../utils/types';
+import { TextInput } from '../ui/TextInput';
 
 interface ElementFormProps {
   initialData?: CreateElementData;
@@ -43,51 +44,36 @@ export function ElementForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 select-none cursor-pointer">
-          Image URL
-        </label>
-        <input
-          type="url"
-          id="imageUrl"
-          value={formData.imageUrl}
-          onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-          required
-          className="mt-1 p-1 block w-full rounded-md border active:border-purple-500 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-md"
-        />
-      </div>
+      <TextInput
+        type="url"
+        id="imageUrl"
+        value={formData.imageUrl}
+        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+        required
+        label='Image URL'
+      />
 
       {!isEdit && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="width" className="block text-sm font-medium text-gray-700 select-none cursor-pointer">
-              Width
-            </label>
-            <input
-              type="number"
-              id="width"
-              value={formData.width}
-              onChange={(e) => setFormData({ ...formData, width: Number(e.target.value) })}
-              required
-              min="1"
-              className="mt-1 p-1 block w-full rounded-md border shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-md"
-            />
-          </div>
+          <TextInput
+            type="number"
+            id="width"
+            value={formData.width}
+            onChange={(e) => setFormData({ ...formData, width: Number(e.target.value) })}
+            required
+            min="1"
+            label='Width'
+          />
 
-          <div>
-            <label htmlFor="height" className="block text-sm font-medium text-gray-700 select-none cursor-pointer">
-              Height
-            </label>
-            <input
-              type="number"
-              id="height"
-              value={formData.height}
-              onChange={(e) => setFormData({ ...formData, height: Number(e.target.value) })}
-              required
-              min="1"
-              className="mt-1 p-1 block w-full rounded-md border shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-md"
-            />
-          </div>
+          <TextInput
+            type="number"
+            id="height"
+            value={formData.height}
+            onChange={(e) => setFormData({ ...formData, height: Number(e.target.value) })}
+            required
+            min="1"
+            label='Height'
+          />
         </div>
       )}
 
@@ -98,7 +84,7 @@ export function ElementForm({
             id="static"
             checked={formData.static}
             onChange={(e) => setFormData({ ...formData, static: e.target.checked })}
-            className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+            className="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
           />
           <label htmlFor="static" className="ml-2 block text-md text-gray-700 select-none cursor-pointer">
             Static Element

@@ -188,10 +188,9 @@ export const CreateElement = () => {
         )}
 
         {showFormPopup && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-            <div
-              className="bg-white rounded-lg shadow-lg w-full max-w-[96%] sm:max-w-md mx-auto overflow-hidden"
-            >
+          <div onClick={() => setShowFormPopup(false)} className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+            <div onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-lg shadow-lg w-full max-w-[96%] sm:max-w-md mx-auto overflow-hidden">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold text-gray-900">
