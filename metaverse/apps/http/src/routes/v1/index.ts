@@ -16,7 +16,7 @@ export const router = Router();
 router.post('/signup', async (req, res) => {
     const parsedData = SignupSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.status(400).json({ message: "Validation failed" });
+        res.status(400).json({ message: "Signup Validation failed" });
         return;
     }
     const hashedPassword = await hash(parsedData.data.password);
@@ -52,7 +52,7 @@ const loginLimiter = rateLimit({
 router.post('/signin', loginLimiter, async (req, res) => {
     const parsedData = SigninSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.status(403).json({ message: "Validation failed" })
+        res.status(403).json({ message: "Signin Validation failed" })
         return
     }
     try {
