@@ -6,14 +6,14 @@ export const SignupSchema = z
         password: z.string(),
         role: z.enum(["User", "Admin"]),
     })
-    .refine(
-        (data) =>
-            data.email !== process.env.ADMIN_USER_ID || data.role === "Admin",
-        {
-            message: "Only Admin role can be assigned to the specified email.",
-            path: ["role"],
-        }
-    );
+    // .refine(
+    //     (data) =>
+    //         data.email !== process.env.ADMIN_USER_ID || data.role === "User",
+    //     {
+    //         message: "Only Admin role can be assigned to the specified email.",
+    //         path: ["role"],
+    //     }
+    // );
 
 export const SigninSchema = z.object({
     email: z.string().email(),

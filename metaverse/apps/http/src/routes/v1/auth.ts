@@ -43,7 +43,7 @@ authRouter.post('/validate-token', async (req, res) => {
         const decodedToken = jwt.verify(
             token,
             process.env.JWT_SECRET || 'someSuperSecretKey'
-        ) as { userId: string; email: string; role: string };
+        ) as { userId: string; role: string };
 
         const user = await client.user.findUnique({
             where: {

@@ -310,6 +310,8 @@ describe("Space information", () => {
                 authorization: `Bearer ${userToken}`
             }
         })
+        console.log("=== response.status===",response.status)
+        console.log("=== response.data===",response.data)
         expect(response.status).toBe(200)
         expect(response.data.spaceId).toBeDefined()
     })

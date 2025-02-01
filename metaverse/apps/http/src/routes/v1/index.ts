@@ -49,7 +49,7 @@ const loginLimiter = rateLimit({
     message: 'Too many login attempts, please try again later.'
 });
 
-router.post('/signin', loginLimiter, async (req, res) => {
+router.post('/signin', async (req, res) => {
     const parsedData = SigninSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(403).json({ message: "Signin Validation failed" })
@@ -78,9 +78,8 @@ router.post('/signin', loginLimiter, async (req, res) => {
 
         const token = jwt.sign({
             userId: user.id,
-            email: user.email,
             role: user.role
-        }, process.env.JWT_SECRET || 'someSuperSecretKey', { expiresIn: '48h' });
+        }, process.env.JWT_SECRET || 'someSuperSecretKey', { expiresIn: '72h' });
 
         res.json({
             token,

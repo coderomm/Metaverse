@@ -12,8 +12,6 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         return;
     }
 
-    console.error('authHeader = ', authHeader)
-
     const token = authHeader?.split(" ")[1];
 
     if (!token) {
@@ -22,7 +20,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { role: string, userId: string }
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, role: string }
         if (decoded.role !== "Admin") {
             res.status(403).json({ message: 'Forbidden: Admin only' })
             return

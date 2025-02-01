@@ -13,7 +13,7 @@ export const userMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'someSuperSecretKey') as { role: string, userId: string, email: string }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'someSuperSecretKey') as { userId: string, role: string }
         req.userId = decoded.userId
         next()
     } catch (e) {
