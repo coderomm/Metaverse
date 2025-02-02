@@ -3,8 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import 'dotenv/config'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'someSuperSecretKey';
-
 export const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -19,8 +17,13 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         return
     }
 
+    if (!process.env.JWT_SECRET) {
+        res.status(403).json({ message: "Internal server error of JWT_SECRET missing" })
+        return;
+    }
+
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, role: string }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string, role: string }
         if (decoded.role !== "Admin") {
             res.status(403).json({ message: 'Forbidden: Admin only' })
             return

@@ -40,10 +40,12 @@ authRouter.post('/validate-token', async (req, res) => {
 
         const token = authHeader.split(' ')[1];
 
-        const decodedToken = jwt.verify(
-            token,
-            process.env.JWT_SECRET || 'someSuperSecretKey'
-        ) as { userId: string; role: string };
+        if (!process.env.JWT_SECRET) {
+            res.status(403).json({ message: "Internal server error of JWT_SECRET missing" })
+            return;
+        }
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET) as { userId: string; role: string };
 
         const user = await client.user.findUnique({
             where: {

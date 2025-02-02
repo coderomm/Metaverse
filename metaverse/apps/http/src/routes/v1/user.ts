@@ -75,8 +75,8 @@ userRouter.get('/me', userMiddleware, async (req, res) => {
             }
         });
     } catch (error) {
-        console.error(error);
-        res.status(401).json({ error: 'Unauthorized' });
+        console.error("Error fetching me: ", error);
+        res.status(500).json({ message: "Error fetching me: " + error });
         return
     }
 });

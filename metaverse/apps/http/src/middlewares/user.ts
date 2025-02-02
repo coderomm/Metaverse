@@ -8,12 +8,17 @@ export const userMiddleware = (req: Request, res: Response, next: NextFunction) 
     const token = header?.split(" ")[1];
 
     if (!token) {
-        res.status(403).json({ message: "Unauthorized" })
+        res.status(403).json({ message: "Unauthorized: Token missing!" })
         return
     }
 
+    if (!process.env.JWT_SECRET) {
+        res.status(403).json({ message: "Internal server error of JWT_SECRET missing" })
+        return;
+    }
+
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'someSuperSecretKey') as { userId: string, role: string }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string, role: string }
         req.userId = decoded.userId
         next()
     } catch (e) {

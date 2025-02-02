@@ -37,8 +37,8 @@ router.post('/signup', async (req, res) => {
             }
         })
         res.json({ userId: user.id })
-    } catch (error) {
-        res.status(400).json({ message: "User already exists" })
+    } catch (e) {
+        res.status(400).json({ message: "Internal server error: ", e })
         return
     }
 })
@@ -76,10 +76,12 @@ router.post('/signin', async (req, res) => {
             return
         }
 
-        const token = jwt.sign({
-            userId: user.id,
-            role: user.role
-        }, process.env.JWT_SECRET || 'someSuperSecretKey', { expiresIn: '72h' });
+        if (!process.env.JWT_SECRET) {
+            res.status(403).json({ message: "Internal server error of JWT_SECRET missing" })
+            return;
+        }
+
+        const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '72h' });
 
         res.json({
             token,
@@ -91,7 +93,7 @@ router.post('/signin', async (req, res) => {
             }
         });
     } catch (e) {
-        res.status(400).json({ message: "Internal server error" })
+        res.status(400).json({ message: "Internal server error: ", e })
         return
     }
 })

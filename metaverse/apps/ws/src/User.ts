@@ -38,7 +38,12 @@ export class User {
                     const spaceId = parsedData.payload.spaceId;
                     const token = parsedData.payload.token;
                     try {
-                        const userId = (jwt.verify(token, process.env.JWT_SECRET || 'someSuperSecretKey') as JwtPayload).userId
+                        if (!process.env.JWT_SECRET) {
+                            console.error("Internal server error of JWT_SECRET missing");
+                            this.ws.close()
+                            return
+                        }
+                        const userId = (jwt.verify(token, process.env.JWT_SECRET) as JwtPayload).userId
                         if (!userId) {
                             console.error("Invalid token, closing WebSocket.");
                             this.ws.close()

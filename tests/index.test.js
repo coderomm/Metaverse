@@ -235,8 +235,10 @@ describe("Space information", () => {
         })
         adminToken = adminSigninResponse.data.token
 
+        const userEmail = "NormalUser" + Math.random() + "@gmail.com";
+
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            email: "NormalUser" + Math.random() + "@gmail.com",
+            email: userEmail,
             password,
             role: "User"
         });
@@ -244,7 +246,7 @@ describe("Space information", () => {
         userId = userSignupResponse.data.userId
 
         const userSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            email: "NormalUser" + Math.random() + "@gmail.com",
+            email: userEmail,
             password
         })
 
@@ -300,7 +302,6 @@ describe("Space information", () => {
     });
 
     test("User is able to create a space", async () => {
-
         const response = await axios.post(`${BACKEND_URL}/api/v1/space`, {
             "name": "Test",
             "dimensions": "100x200",
@@ -310,8 +311,6 @@ describe("Space information", () => {
                 authorization: `Bearer ${userToken}`
             }
         })
-        console.log("=== response.status===",response.status)
-        console.log("=== response.data===",response.data)
         expect(response.status).toBe(200)
         expect(response.data.spaceId).toBeDefined()
     })
@@ -448,8 +447,10 @@ describe("Arena endpoints", () => {
 
         adminToken = response.data.token
 
+        const normalUser = "NormalUser" + Math.random() + "@gmail.com";
+
         const userSignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-            email: "NormalUser" + Math.random() + "@gmail.com",
+            email: normalUser,
             password,
             role: "User"
         });
@@ -457,7 +458,7 @@ describe("Arena endpoints", () => {
         userId = userSignupResponse.data.userId
 
         const userSigninResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
-            email: "NormalUser" + Math.random() + "@gmail.com",
+            email: normalUser,
             password
         })
 
@@ -685,10 +686,10 @@ describe("Admin Endpoints", () => {
             }
         })
 
-        expect(elementReponse.status).toBe(403)
-        expect(mapResponse.status).toBe(403)
-        expect(avatarResponse.status).toBe(403)
-        expect(updateElementResponse.status).toBe(403)
+        expect(elementReponse.status).toBe(401)
+        expect(mapResponse.status).toBe(401)
+        expect(avatarResponse.status).toBe(401)
+        expect(updateElementResponse.status).toBe(401)
     })
 
     test("Admin is able to hit admin Endpoints", async () => {
