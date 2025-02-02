@@ -2,9 +2,46 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import landingBanner from '../assets/images/home/landingBanner.png'
+import { motion } from "framer-motion"
 
 export const LandingPage: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+        delayChildren: 0.2,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  }
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.7,
+        ease: "easeOut",
+      },
+    },
+  }
+
   if (isLoading) {
     return (
       <div className="flex justify-center my-8">
@@ -17,16 +54,60 @@ export const LandingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white pt-32 pb-16 sm:pt-40 sm:pb-24">
-      <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold tracking-tight text--highlight sm:text-5xl md:text-6xl">
-          Easy and Fun Metaverse, <span className="text-purple-500">Meety</span>
-        </h1>
-        <p className="mt-4 text-xl text-gray-600">
+    <div className="min-h-screen bg-white pt-32 pb-16 sm:pt-40 sm:pb-24">
+      <motion.div
+        className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl" variants={itemVariants}>
+          Easy and Fun Metaverse,{" "}
+          <motion.span
+            className="text-purple-500"
+            whileHover={{
+              scale: 1.05,
+              transition: { duration: 0.2 },
+            }}
+          >
+            Towny
+          </motion.span>
+        </motion.h1>
+        <motion.p className="mt-4 text-xl text-gray-600" variants={itemVariants}>
           Join our community and explore the endless possibilities of the metaverse.
-        </p>
-        <img src={landingBanner} className='mt-12 max-w-[80%] mx-auto rounded-full'/>
-      </div>
+        </motion.p>
+        <motion.div
+          className="relative mt-12 aspect-[16/9] w-[80%] mx-auto overflow-hidden rounded-3xl"
+          variants={imageVariants}
+          whileHover={{
+            scale: 1.02,
+            transition: { duration: 0.3 },
+          }}
+        >
+          <img
+            src={landingBanner}
+            alt="Landing Banner"
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 80vw"
+          />
+        </motion.div>
+        <motion.div className="mt-8 flex justify-center gap-4" variants={itemVariants}>
+          <motion.button
+            className="rounded-full bg-purple-600 px-8 py-3 text-white shadow-lg hover:bg-purple-700"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Get Started
+          </motion.button>
+          <motion.button
+            className="rounded-full border-2 border-purple-600 px-8 py-3 text-purple-600 shadow-lg hover:bg-purple-50"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Learn More
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
-  );
-};
+  )
+}

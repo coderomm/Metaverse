@@ -292,7 +292,7 @@ const PlayPage = () => {
                                     className="w-8 h-8 rounded-full"
                                     style={{ backgroundColor: user.color }}
                                 />
-                                <span>User {user.id.slice(0,4)}</span>
+                                <span>User {user.id.slice(0, 4)}</span>
                             </div>
                         ))}
                     </div>

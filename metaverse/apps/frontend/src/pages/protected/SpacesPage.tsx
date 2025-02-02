@@ -137,7 +137,7 @@ export const SpacesPage = () => {
     <div className="min-h-dvh pb-10 pt-16">
       <Section>
         <h1 className="text-4xl font-bold tracking-tight text-purple-600 sm:text-5xl lg:text-6xl">
-          Welcome to Your Meety Space
+          Welcome to Your Towny Space
         </h1>
         <p className="mt-4 text-xl text-gray-600">
           Explore and create in your personal metaverse space.

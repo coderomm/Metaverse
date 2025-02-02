@@ -48,7 +48,7 @@ export const SignupPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
       <div className="max-w-md w-full py-12 px-5 bg-white rounded-xl flex flex-col gap-[10px] items-center authcard">
-        <h2 className="text-center text-2xl lg:text-4xl font-bold text-[#6758ff] mb-10">Meety</h2>
+        <h2 className="text-center text-2xl lg:text-4xl font-bold text-[#6758ff] mb-10">Towny</h2>
         {error && <div className="text-red-600 text-center">{error}</div>}
         <button onClick={handleGoogleLogin} className='cursor-pointer rounded-[8px] py-[10px] px-[16px] select-none w-full h-[40px] md:h-[48px] border-2 border-solid !border-purple-500 hover:bg-gray-50 flex items-center justify-center'>
           <div className="flex items-center justify-center gap-[6px]">
