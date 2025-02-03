@@ -34,12 +34,11 @@ export const Navbar: React.FC = () => {
     <motion.header
       animate={{
         y: isScrolled ? 16 : 0,
-        backgroundColor: isScrolled ? "#ffffff" : "#ffffff",
       }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="fixed wrapper top-0 z-50 flex items-center gap-2 p-4 md:px-12 w-full mx-auto">
-      <div className="flex max-w-7xl w-full justify-between mx-auto bg-[#f3f4f626] shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-[#1118271a] p-6 rounded-2xl">
-        <Link to={user?.email ? '/home/spaces' : '/'} className="flex items-center justify-start text-purple-500 text-3xl md:text-5xl font-bold m-0">Towny</Link>
+      className="fixed wrapper top-0 z-50 flex items-center gap-2 px-4 py-2 md:px-12 md:py-0 md:mt-4 w-full mx-auto">
+      <div className="flex max-w-7xl w-full justify-between mx-auto bg-[#f3f4f626] shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-[#1118271a] p-3 md:p-5 rounded-2xl">
+        <Link to={user?.email ? '/home/spaces' : '/'} className="flex items-center justify-start text-purple-500 text-3xl md:text-4xl font-bold m-0">Towny</Link>
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>

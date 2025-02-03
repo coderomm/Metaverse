@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import landingBanner from '../assets/images/home/landingBanner.png'
 import { motion } from "framer-motion"
 
 export const LandingPage: React.FC = () => {
@@ -77,7 +76,7 @@ export const LandingPage: React.FC = () => {
           Join our community and explore the endless possibilities of the metaverse.
         </motion.p>
         <motion.div
-          className="relative mt-12 aspect-[16/9] w-[80%] mx-auto overflow-hidden rounded-3xl"
+          className="relative mt-12 aspect-auto w-[80%] mx-auto overflow-hidden rounded-3xl"
           variants={imageVariants}
           whileHover={{
             scale: 1.02,
@@ -85,22 +84,22 @@ export const LandingPage: React.FC = () => {
           }}
         >
           <img
-            src={landingBanner}
+            src="https://towny-2d.s3.ap-south-1.amazonaws.com/landingBanner.png"
             alt="Landing Banner"
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 80vw"
           />
         </motion.div>
-        <motion.div className="mt-8 flex justify-center gap-4" variants={itemVariants}>
+        <motion.div className="mt-10 flex justify-center gap-4" variants={itemVariants}>
           <motion.button
-            className="rounded-full bg-purple-600 px-8 py-3 text-white shadow-lg hover:bg-purple-700"
+            className="rounded-full bg-purple-600 px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-purple-700"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             Get Started
           </motion.button>
           <motion.button
-            className="rounded-full border-2 border-purple-600 px-8 py-3 text-purple-600 shadow-lg hover:bg-purple-50"
+            className="rounded-full border-2 border-purple-600 px-4 py-1 md:px-8 md:py-3 text-purple-600 shadow-lg hover:bg-purple-50"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

@@ -7,7 +7,7 @@ export const spaceRouter = Router();
 spaceRouter.post("/", userMiddleware, async (req, res) => {
     const parsedData = CreateSpaceSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.status(400).json({ message: "Validation failed" });
+        res.status(400).json({ message: "Validation failed", errors: parsedData.error.format() });
         return;
     }
 
@@ -15,16 +15,22 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
         let space;
 
         if (!parsedData.data.mapId) {
+            const dimensions = parsedData.data.dimensions.split("x");
+            if (dimensions.length !== 2) {
+                res.status(400).json({ message: "Invalid dimensions format" });
+                return;
+            }
+
             space = await client.space.create({
                 data: {
                     name: parsedData.data.name,
-                    width: parseInt(parsedData.data.dimensions.split("x")[0]),
-                    height: parseInt(parsedData.data.dimensions.split("x")[1]),
+                    width: parseInt(dimensions[0]),
+                    height: parseInt(dimensions[1]),
                     creatorId: req.userId!,
                 },
             });
         } else {
-            const map = await client.map.findFirst({
+            const map = await client.map.findUnique({
                 where: { id: parsedData.data.mapId },
                 select: {
                     mapElements: true,
@@ -35,7 +41,7 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
             });
 
             if (!map) {
-                res.status(400).json({ message: "Map not found" });
+                res.status(404).json({ message: "Map not found" });
                 return;
             }
 
@@ -52,7 +58,7 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
                 });
 
                 await client.spaceElements.createMany({
-                    data: map.mapElements.map((e) => ({
+                    data: map.mapElements.map(e => ({
                         spaceId: createdSpace.id,
                         elementId: e.elementId,
                         x: e.x!,
@@ -68,62 +74,58 @@ spaceRouter.post("/", userMiddleware, async (req, res) => {
             where: {
                 userId_spaceId: { userId: req.userId!, spaceId: space.id },
             },
-            update: {
-                visitedAt: new Date(),
-            },
-            create: {
-                userId: req.userId!,
-                spaceId: space.id,
-            },
+            update: { visitedAt: new Date() },
+            create: { userId: req.userId!, spaceId: space.id },
         });
 
         res.json({ spaceId: space.id });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error creating space:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
 
 spaceRouter.delete("/element", userMiddleware, async (req, res) => {
     try {
-        const parsedData = DeleteElementSchema.safeParse(req.body)
+        const parsedData = DeleteElementSchema.safeParse(req.body);
         if (!parsedData.success) {
-            res.status(400).json({ message: "Invalid dimensions format" })
-            return
+            res.status(400).json({ message: "Invalid element data", errors: parsedData.error.format() });
+            return;
         }
+
         const spaceElement = await client.spaceElements.findFirst({
-            where: {
-                id: parsedData.data.id
-            },
-            include: {
-                space: true
-            }
-        })
-        if (!spaceElement?.space.creatorId || spaceElement.space.creatorId !== req.userId) {
-            res.status(403).json({ message: "Unauthorized" })
-            return
+            where: { id: parsedData.data.id },
+            include: { space: true }
+        });
+
+        if (!spaceElement) {
+            res.status(404).json({ message: "Element not found" });
+            return;
         }
-        await client.spaceElements.delete({
-            where: {
-                id: parsedData.data.id
-            }
-        })
-        res.json({ message: "Element deleted" })
-    } catch (error) {
-        console.error("Erro deleting element: ", error);
-        res.status(500).json({ message: `Erro deleting element: ${error}` });
+
+        if (spaceElement.space.creatorId !== req.userId) {
+            res.status(403).json({ message: "Unauthorized" });
+            return;
+        }
+
+        await client.spaceElements.delete({ where: { id: parsedData.data.id } });
+        res.json({ message: "Element deleted" });
+
+    } catch (error: any) {
+        console.error("Error deleting element:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
-})
+});
 
 spaceRouter.delete("/:spaceId", userMiddleware, async (req, res) => {
     try {
         const spaceId = req.params.spaceId;
-        const userId = req.userId;
 
         const space = await client.space.findUnique({
             where: { id: spaceId },
             select: { creatorId: true }
         })
+
         if (!space) {
             res.status(400).json({ message: "Space not found" })
             return
@@ -135,41 +137,29 @@ spaceRouter.delete("/:spaceId", userMiddleware, async (req, res) => {
         }
 
         await client.$transaction([
-            client.recentVisitedSpace.deleteMany({
-                where: { spaceId }
-            }),
-            client.space.delete({
-                where: { id: spaceId }
-            })
-        ])
-        res.json({ message: "Space and related recent visits deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting space: ", error);
-        res.status(500).json({ message: `Error deleting space: ${error}` });
+            client.recentVisitedSpace.deleteMany({ where: { spaceId } }),
+            client.space.delete({ where: { id: spaceId } })
+        ]);
+
+        res.json({ message: "Space deleted successfully" });
+    } catch (error: any) {
+        console.error("Error deleting space:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
-})
+});
 
 spaceRouter.get("/all", userMiddleware, async (req, res) => {
     try {
         const spaces = await client.space.findMany({
-            where: {
-                creatorId: req.userId!
-            }
+            where: { creatorId: req.userId! }
         });
 
-        res.json({
-            spaces: spaces.map(s => ({
-                id: s.id,
-                name: s.name,
-                thumbnail: s.thumbnail,
-                dimensions: `${s.width}x${s.height}`,
-            }))
-        })
-    } catch (error) {
-        console.error("Error getting all spaces:", error);
-        res.status(500).json({ message: `Error getting all spaces: ${error}` });
+        res.json({ spaces });
+    } catch (error: any) {
+        console.error("Error fetching spaces:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
-})
+});
 
 spaceRouter.post("/element", userMiddleware, async (req, res) => {
     try {
@@ -207,9 +197,9 @@ spaceRouter.post("/element", userMiddleware, async (req, res) => {
             }
         })
         res.json({ message: "Element added" })
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error adding element in space: ", error);
-        res.status(500).json({ message: "Internal error while adding element in space: " + error });
+        res.status(500).json({ message: "Internal error while adding element in space: " + error.message });
     }
 })
 
@@ -249,9 +239,9 @@ spaceRouter.get("/recent", userMiddleware, async (req, res) => {
         res.json({
             recentSpaces: formattedSpaces,
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching recent spaces:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
 
@@ -260,39 +250,23 @@ spaceRouter.get("/:spaceId", userMiddleware, async (req, res) => {
 
     try {
         const space = await client.space.findUnique({
-            where: {
-                id: spaceId
-            },
-            include: {
-                spaceElements: {
-                    include: {
-                        element: true
-                    }
-                },
-                map: true
-            }
-        })
+            where: { id: spaceId },
+            include: { spaceElements: { include: { element: true } }, map: true }
+        });
 
         if (!space) {
-            res.status(400).json({ message: "Space not found" })
-            return
+            res.status(404).json({ message: "Space not found" });
+            return;
         }
 
         await client.recentVisitedSpace.upsert({
-            where: {
-                userId_spaceId: { userId: req.userId!, spaceId },
-            },
-            update: {
-                visitedAt: new Date(),
-            },
-            create: {
-                userId: req.userId!,
-                spaceId,
-            },
+            where: { userId_spaceId: { userId: req.userId!, spaceId } },
+            update: { visitedAt: new Date() },
+            create: { userId: req.userId!, spaceId },
         });
 
         res.json({
-            "dimensions": `${space.width}x${space.height}`,
+            dimensions: `${space.width}x${space.height}`,
             elements: space.spaceElements.map(e => ({
                 id: e.id,
                 element: {
@@ -304,10 +278,10 @@ spaceRouter.get("/:spaceId", userMiddleware, async (req, res) => {
                 },
                 x: e.x,
                 y: e.y
-            })),
-        })
-    } catch (error) {
+            }))
+        });
+    } catch (error: any) {
         console.error("Error fetching space details:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });

@@ -1,4 +1,7 @@
 import z from "zod";
+import 'dotenv/config'
+
+const ALLOWED_ADMIN_EMAILS = process.env.ALLOWED_ADMIN_EMAILS ? process.env.ALLOWED_ADMIN_EMAILS.split(",").map(email => email.trim()) : [];
 
 export const SignupSchema = z
     .object({
@@ -6,14 +9,18 @@ export const SignupSchema = z
         password: z.string(),
         role: z.enum(["User", "Admin"]),
     })
-    // .refine(
-    //     (data) =>
-    //         data.email !== process.env.ADMIN_USER_ID || data.role === "User",
-    //     {
-    //         message: "Only Admin role can be assigned to the specified email.",
-    //         path: ["role"],
-    //     }
-    // );
+    .refine(
+        (data) => {
+            if (data.role === "Admin") {
+                return ALLOWED_ADMIN_EMAILS.includes(data.email);
+            }
+            return true;
+        },
+        {
+            message: "Only specific admin emails can be assigned the Admin role.",
+            path: ["role"],
+        }
+    );
 
 export const SigninSchema = z.object({
     email: z.string().email(),
