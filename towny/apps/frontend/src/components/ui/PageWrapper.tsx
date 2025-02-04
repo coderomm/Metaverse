@@ -7,7 +7,7 @@ interface PageProps {
 
 const PageWrapper: FC<PageProps> = ({ children, className = '' }) => {
     return (
-        <div className={`min-h-screen bg-white pb-10 pt-20 ${className}`}>
+        <div className={`min-h-screen bg-white py-8 ${className}`}>
             {children}
         </div>
     );

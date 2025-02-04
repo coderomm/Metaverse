@@ -27,14 +27,12 @@ export function ElementForm({
     setError(null);
 
     try {
-      // await onSubmit(formData);
       if (isEdit) {
         const updateData: UpdateElementData = {
           imageUrl: formData.imageUrl
         };
         await onSubmit(updateData);
       } else {
-        // If creating, send all CreateElementData fields
         await onSubmit(formData);
       }
     } catch (err) {

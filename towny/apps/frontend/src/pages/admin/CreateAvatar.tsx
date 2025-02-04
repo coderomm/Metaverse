@@ -75,7 +75,7 @@ export const CreateAvatar = () => {
 
     return (
         <PageWrapper>
-            <Section>
+            <Section className='py-0'>
                 <div className="flex justify-between items-center mb-10">
                     <h1 className="text-2xl font-bold">Avatar Management</h1>
                     {!showCreateForm && (

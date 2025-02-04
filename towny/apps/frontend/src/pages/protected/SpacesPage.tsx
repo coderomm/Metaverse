@@ -136,7 +136,7 @@ export const SpacesPage = () => {
 
   return (
     <PageWrapper>
-      <Section>
+      <Section className='pt-0'>
         <h1 className="text-4xl font-bold tracking-tight text-purple-600 sm:text-5xl lg:text-6xl">
           Welcome to Your Towny Space
         </h1>
@@ -146,7 +146,7 @@ export const SpacesPage = () => {
       </Section>
       <Section>
         <div className="topBar flex flex-col">
-          <div className="topBar_Inner flex justify-between items-center py-3">
+          <div className="topBar_Inner flex justify-between items-center">
             <div className="topBar_left flex items-center justify-center">
               <span
                 className={`text-[#27262e] font-bold text-base cursor-pointer ${isShowingRecent ? 'opacity-100' : 'opacity-70'
@@ -207,7 +207,7 @@ export const SpacesPage = () => {
             <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-7">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-7">
             {filteredSpaces.length === 0 ? (
               <div className="col-span-2 lg:col-span-3 flex flex-col items-center justify-center h-64 text-center mt-8">
                 <div className="bg-purple-100 rounded-full p-4 mb-4 hidden">
@@ -261,14 +261,14 @@ export const SpacesPage = () => {
         open={joinDialogOpen}
         onClose={() => setJoinDialogOpen(false)}
       />
-      <div className="sticky right-0 bottom-0 left-0 flex sm:hidden gap-2 justify-between items-center pt-2 px-6 pb-3 w-full">
+      <section className="sticky right-0 bottom-0 left-0 flex sm:hidden gap-2 justify-between items-center pt-2 px-6 pb-3 w-full">
         <button onClick={() => setJoinDialogOpen(true)}
           className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-base font-semibold h-[48px] w-full gap-1 rounded-lg'
         ><LogIn className="w-5 h-5" />Enter with Code</button>
         <button onClick={() => setCreateDialogOpen(true)}
           className="bg-purple-600 hover:bg-purple-700 text-white inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-base font-semibold h-[48px] w-full gap-1 rounded-lg"
         ><Plus className="w-5 h-5" />Create Space</button>
-      </div>
+      </section>
     </PageWrapper>
   );
 };
