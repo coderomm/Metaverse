@@ -1,120 +1,94 @@
+import { AxiosError } from "axios";
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client } from "@aws-sdk/client-s3";
 import { toast } from "sonner";
 
 interface ImageUploaderProps {
-  onUploadComplete: (url: string) => void;
+  onUpload: (file: File) => Promise<string>; // Function that uploads and returns the URL
+  onUploadComplete: (url: string) => void; // Callback to return uploaded image URL
   label?: string;
-  folder?: string;
+  acceptTypes?: string[]; // Allowed file types
+  maxSize?: number; // Max file size in MB
+  preview?: boolean; // Show preview or not
+  className?: string; // Custom styling
 }
 
-export function ImageUploader({ onUploadComplete, label = "Upload Image", folder = "uploads" }: ImageUploaderProps) {
+export function ImageUploader({
+  onUpload,
+  onUploadComplete,
+  label = "Upload Image",
+  acceptTypes = ["image/*"],
+  maxSize = 5,
+  preview = true,
+  className = "",
+}: ImageUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) return;
-
     const selectedFile = acceptedFiles[0];
+
+    // Validate file size
+    if (selectedFile.size > maxSize * 1024 * 1024) {
+      toast.error(`File size should not exceed ${maxSize}MB`);
+      return;
+    }
+
     setFile(selectedFile);
-    setPreview(URL.createObjectURL(selectedFile));
-    setError(null);
+    if (preview) setPreviewUrl(URL.createObjectURL(selectedFile));
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept: acceptTypes.reduce((acc, type) => ({ ...acc, [type]: [] }), {}),
     multiple: false,
   });
 
-  const uploadToS3 = async () => {
+  const uploadFile = async () => {
     if (!file) {
-      toast.error("Please select an image first.");
-      setError("Please select an image first.");
+      toast.error("Please select a file.");
       return;
     }
 
     setUploading(true);
-    setProgress(50);
-    setError(null);
+    setProgress(0);
 
     try {
-      const client = new S3Client({
-        region: import.meta.env.VITE_PUBLIC_AWS_REGION,
-        credentials: {
-          accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
-          secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-        },
-      });
-
-      const upload = new Upload({
-        client,
-        params: {
-          Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
-          Key: `${folder}/${Date.now()}-${file.name}`,
-          Body: file,
-          ContentType: file.type,
-        },
-      });
-
-      upload.on("httpUploadProgress", (progress) => {
-        if (progress.loaded && progress.total) {
-          const percentage = Math.round((progress.loaded / progress.total) * 100);
-          setProgress(percentage);
-        }
-      });
-
-      const result = await upload.done();
-      onUploadComplete(result.Location!);
+      const url = await onUpload(file);
+      onUploadComplete(url);
       setFile(null);
-      setPreview(null);
+      setPreviewUrl(null);
+      toast.success("Upload successful!");
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Upload failed. Please try again.");
-      setError("Upload failed. Please try again.");
+      const message = error instanceof AxiosError
+        ? error.response?.data?.message || error.message
+        : error instanceof Error
+          ? error.message
+          : 'An unexpected error occurred';
+      toast.error(`${message}`);
+      console.error("Upload failed: ", message)
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${className}`}>
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer ${isDragActive ? "border-purple-500 bg-purple-50" : "border-gray-300"}`}
       >
         <input {...getInputProps()} />
-        {isDragActive ? <p className="text-purple-500">Drop the image here ...</p> : <p>Drag & drop an image here, or click to select one</p>}
+        {isDragActive ? <p className="text-purple-500">Drop the image here...</p> : <p>Drag & drop an image, or click to select</p>}
       </div>
 
-      {preview && <img src={preview} alt="Preview" className="mx-auto w-32 h-32 object-cover rounded-lg" />}
+      {preview && previewUrl && <img src={previewUrl} alt="Preview" className="w-32 h-32 rounded-lg mx-auto" />}
 
-      {file && !uploading && (
-        <button
-          type="button"
-          disabled={uploading}
-          onClick={uploadToS3}
-          className={`text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition duration-200 flex items-center justify-center h-[40px]
-      ${!uploading ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-500"}`}>
-          {label}
-        </button>
-      )}
-
-      {uploading && (
-        <div className="mt-2">
-          <div className="bg-gray-200 rounded-full h-2.5">
-            <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
-          </div>
-          <p className="text-center mt-2">{progress}% uploaded</p>
-        </div>
-      )}
-
-      {error && <p className="text-red-500">{error}</p>}
+      <button onClick={uploadFile} disabled={uploading} className="bg-purple-500 text-white py-2 px-4 rounded w-full">
+        {uploading ? `Uploading ${progress}%` : label}
+      </button>
     </div>
   );
 }

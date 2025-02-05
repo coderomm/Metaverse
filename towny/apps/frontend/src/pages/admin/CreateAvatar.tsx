@@ -1,14 +1,17 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { AxiosError } from 'axios';
+import { Upload } from "@aws-sdk/lib-storage";
+import { S3Client } from "@aws-sdk/client-s3";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
 import { Avatar, CreateAvatarData, GetAvatarsResponse } from '../../utils/types';
 import { api } from '../../services/api';
-import { AxiosError } from 'axios';
-import { AvatarForm } from '../../components/admin/AvatarForm';
-import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
 import Section from '../../components/ui/Section';
-import { Plus } from 'lucide-react';
-import { AnimatePresence, motion } from "framer-motion";
 import PageWrapper from '../../components/ui/PageWrapper';
+import { ImageUploader } from '../../components/common/ImageUploader';
+import { TextInput } from '../../components/ui/TextInput';
 
 export const CreateAvatar = () => {
     const [avatars, setAvatars] = useState<Avatar[]>([]);
@@ -16,30 +19,55 @@ export const CreateAvatar = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState<CreateAvatarData>({ name: '', imageUrl: '', });
 
-    const elementsApi = {
-        getElements: () => api.get<GetAvatarsResponse>('/avatars'),
-        createElement: (data: CreateAvatarData) => api.post<Avatar>('/admin/avatar', data),
-    };
+    const s3Client = new S3Client({
+        region: import.meta.env.VITE_PUBLIC_AWS_REGION,
+        credentials: {
+            accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
+            secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
+        },
+    });
 
-    const handleError = (error: unknown) => {
-        const message = error instanceof AxiosError
-            ? error.response?.data?.message || error.message
-            : error instanceof Error
-                ? error.message
-                : 'An unexpected error occurred';
-        setError(message);
-        toast.info(message)
+    const uploadToS3 = async (file: File): Promise<string> => {
+        if (!formData.name.trim()) {
+            toast.error("Please enter an image name before uploading.");
+            throw new Error("Image name is required")
+        }
+
+        const sanitizedFileName = formData.name.replace(/\s+/g, "-").toLowerCase();
+        const upload = new Upload({
+            client: s3Client,
+            params: {
+                Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
+                Key: `avatars/${sanitizedFileName}.jpg`,
+                Body: file,
+                ContentType: file.type,
+                ACL: "public-read",
+            },
+        });
+
+        const result = await upload.done();
+        if (!result.Location) {
+            throw new Error("Upload failed: No URL returned");
+        }
+        return result.Location!;
     };
 
     const fetchElements = useCallback(async () => {
         try {
-            setIsLoading(true);
             setError(null);
-            const response = await elementsApi.getElements();
+            setIsLoading(true);
+            const response = await api.get<GetAvatarsResponse>('/avatars');
             setAvatars(response.data.avatars);
         } catch (err) {
-            handleError(err);
+            const message =
+                err instanceof AxiosError
+                    ? err.response?.data?.message || err.message
+                    : err instanceof Error
+                        ? err.message
+                        : "An unexpected error occurred";
+            toast.error(message);
         } finally {
             setIsLoading(false);
         }
@@ -50,24 +78,33 @@ export const CreateAvatar = () => {
     }, [fetchElements]);
 
     useEffect(() => {
-        document.body.style.overflow = showCreateForm ? "hidden" : ""
+        document.body.style.overflow = showCreateForm ? "hidden" : "";
         return () => {
             document.body.style.overflow = ""
         }
     }, [showCreateForm])
 
-    const handleCreate = async (data: CreateAvatarData) => {
+    const handleUploadComplete = async (url: string) => {
+        setFormData((prev) => ({ ...prev, imageUrl: url }));
         try {
             setIsSubmitting(true);
-            setError(null);
-            await elementsApi.createElement(data);
+            await api.post<Avatar>("/admin/avatar", {
+                name: formData.name,
+                imageUrl: url,
+            });
+
+            toast.success("Avatar created successfully!");
             await fetchElements();
             setShowCreateForm(false);
-            toast.success('Avatar created successfully')
+            setFormData({ name: "", imageUrl: "" });
         } catch (err) {
-            handleError(err);
-            toast.error('Error: ' + err)
-            throw err;
+            const message =
+                err instanceof AxiosError
+                    ? err.response?.data?.message || err.message
+                    : err instanceof Error
+                        ? err.message
+                        : "An unexpected error occurred";
+            toast.error("Error while creating avatar: " + message);
         } finally {
             setIsSubmitting(false);
         }
@@ -121,10 +158,30 @@ export const CreateAvatar = () => {
                                         </svg>
                                     </button>
                                 </div>
-                                <AvatarForm
-                                    onSubmit={handleCreate}
-                                    isLoading={isSubmitting}
-                                />
+                                <div className="space-y-6">
+                                    <div>
+                                        <label htmlFor="imageName" className="block text-sm font-medium text-gray-700 select-none cursor-pointer">
+                                            Image Name
+                                        </label>
+                                        <TextInput
+                                            type="text"
+                                            id="imageName"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            required
+                                            className="w-full text-base px-2 py-[6px] mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                        />
+                                    </div>
+
+                                    <ImageUploader
+                                        onUpload={uploadToS3}
+                                        onUploadComplete={handleUploadComplete}
+                                        acceptTypes={["image/png", "image/jpeg"]}
+                                        maxSize={5}
+                                        label="Upload Profile Picture"
+                                        preview
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
