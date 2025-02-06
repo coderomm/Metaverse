@@ -1,11 +1,16 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { Plus, X, Upload } from 'lucide-react';
+import { Upload, Plus, X, } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { MapCreateFormData, MapElement } from '../../utils/types';
 import Section from '../../components/ui/Section';
 import PageWrapper from '../../components/ui/PageWrapper';
+import { TextInput } from '../../components/ui/TextInput';
+import { Button } from '../../components/ui/Button';
+import { ImageUploader } from '../../components/common/ImageUploader';
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload as S3Upload } from "@aws-sdk/lib-storage";
 
 type ElementData = {
   id: string;
@@ -32,6 +37,44 @@ export const CreateMap = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [availableElements, setAvailableElements] = useState<ElementData[]>([]);
 
+  const s3Client = new S3Client({
+    region: import.meta.env.VITE_PUBLIC_AWS_REGION,
+    credentials: {
+      accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
+      secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
+    },
+  });
+
+  const uploadToS3 = async (file: File): Promise<string> => {
+    if (!formData.name.trim() || !formData.dimensions.trim()) {
+      toast.error("Please enter a map name and valid dimensions before uploading.");
+      throw new Error("Name and dimensions must be provided.");
+    }
+
+    const sanitizedFileName = `${Date.now()}-${file.name.replace(/\s+/g, "-").toLowerCase()}`;
+    const upload = new S3Upload({
+      client: s3Client,
+      params: {
+        Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
+        Key: `maps/${sanitizedFileName}`,
+        Body: file,
+        ContentType: file.type,
+      },
+    });
+
+    try {
+      const result = await upload.done();
+      if (!result.Location) throw new Error("Upload failed: No URL returned.");
+      setFormData((prev) => ({ ...prev, thumbnail: result.Location! }));
+      return result.Location!;
+    } catch (error) {
+      toast.error("Upload failed. Try again.");
+      throw error;
+    } finally {
+      setFormData((prev) => ({ ...prev, thumbnail: '' }));
+    }
+  };
+
   useEffect(() => {
     const fetchElements = async () => {
       try {
@@ -52,14 +95,15 @@ export const CreateMap = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!formData.name.trim() || !formData.dimensions.trim()) {
+      toast.error("Please fill in all required fields before creating the map.");
+      return;
+    }
     setIsLoading(true);
-
     try {
       const response = await api.post('/admin/map', formData);
-
       if (response.status === 200) {
-        const data = await response.data;
-        toast.success(`Map created successfully with ID: ${data.id}`);
+        toast.success(`Map created successfully!`);
         setFormData({
           name: '',
           dimensions: '',
@@ -82,6 +126,10 @@ export const CreateMap = () => {
   };
 
   const addElement = () => {
+    if (!elementInput.elementId || elementInput.x < 0 || elementInput.y < 0) {
+      toast.error("Select a valid element and set X/Y positions.");
+      return;
+    }
     if (elementInput.elementId && elementInput.x && elementInput.y) {
       setFormData(prev => ({
         ...prev,
@@ -100,7 +148,7 @@ export const CreateMap = () => {
 
   return (
     <PageWrapper>
-      <Section>
+      <Section className='pt-0'>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-purple-600">Create New Map</h2>
@@ -108,42 +156,31 @@ export const CreateMap = () => {
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Map Name</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Enter map name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                    required
-                  />
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Dimensions (width x height)</label>
-                  <input
-                    type="text"
-                    value={formData.dimensions}
-                    onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
-                    placeholder="e.g. 800x600"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Thumbnail URL</label>
-                  <input
-                    type="text"
-                    value={formData.thumbnail}
-                    onChange={(e) => setFormData(prev => ({ ...prev, thumbnail: e.target.value }))}
-                    placeholder="Enter thumbnail URL"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                    required
-                  />
-                </div>
-
+                <TextInput
+                  type="text"
+                  label="Map Name"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Enter map name"
+                  required
+                />
+                <TextInput
+                  type="text"
+                  label="Dimensions (width x height)"
+                  value={formData.dimensions}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
+                  placeholder="e.g. 800x600"
+                  required
+                />
+                <ImageUploader
+                  onUpload={uploadToS3}
+                  onUploadComplete={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
+                  acceptTypes={["image/png", "image/jpeg"]}
+                  maxSize={5}
+                  label="Upload Image"
+                  preview
+                />
                 <div className="border rounded-lg p-4 space-y-4">
                   <h3 className="font-medium text-gray-700">Default Elements</h3>
 
@@ -165,29 +202,28 @@ export const CreateMap = () => {
                         </option>
                       ))}
                     </select>
-                    <input
+                    <TextInput
                       type="number"
+                      label="X Position"
+                      value={elementInput.x}
                       onChange={(e) => setElementInput(prev => ({ ...prev, x: parseInt(e.target.value) }))}
                       placeholder="X Position"
-                      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                     />
-                    <input
+                    <TextInput
                       type="number"
+                      label="Y Position"
                       value={elementInput.y}
                       onChange={(e) => setElementInput(prev => ({ ...prev, y: parseInt(e.target.value) }))}
                       placeholder="Y Position"
-                      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                     />
                   </div>
 
-                  <button
-                    type="button"
+                  <Button
+                    type='button'
                     onClick={addElement}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition duration-200 flex items-center justify-center"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Element
-                  </button>
+                    label='Add Element'
+                    icon={<Plus className="w-4 h-4" />}
+                  />
 
                   <div className="space-y-2">
                     {formData.defaultElements.map((element, index) => (
@@ -207,24 +243,13 @@ export const CreateMap = () => {
                   </div>
                 </div>
               </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full py-2 px-4 rounded-md transition duration-200 flex items-center justify-center ${isLoading
-                  ? 'bg-purple-400 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700'
-                  } text-white`}
-              >
-                {isLoading ? (
-                  'Creating Map...'
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Create Map
-                  </>
-                )}
-              </button>
+              <Button
+                type='submit'
+                loading={isLoading}
+                loadingLabel='Creating Map...'
+                label='Create Map'
+                icon={<Upload className="w-4 h-4 mr-2" />}
+              />
             </form>
           </div>
         </div>

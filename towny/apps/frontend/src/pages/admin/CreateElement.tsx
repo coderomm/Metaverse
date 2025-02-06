@@ -17,7 +17,6 @@ export const CreateElement = () => {
   const [selectedElement, setSelectedElement] = useState<Element | null>(null);
   const [showFormPopup, setShowFormPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<CreateElementData>({
     width: 0,
