@@ -1,27 +1,69 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Element, CreateElementData, UpdateElementData, GetElementsResponse } from '../../utils/types';
 import { api } from '../../services/api';
-import { ElementForm } from '../../components/admin/ElementForm';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
 import Section from '../../components/ui/Section';
-import { Plus } from 'lucide-react';
+import { Edit, Plus, X } from 'lucide-react';
 import PageWrapper from '../../components/ui/PageWrapper';
+import { TextInput } from '../../components/ui/TextInput';
+import { ImageUploader } from "../../components/common/ImageUploader";
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 
 export const CreateElement = () => {
   const [elements, setElements] = useState<Element[]>([]);
   const [selectedElement, setSelectedElement] = useState<Element | null>(null);
   const [showFormPopup, setShowFormPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<CreateElementData>({
+    width: 0,
+    height: 0,
+    static: false,
+    imageUrl: '',
+  });
+
+  const s3Client = new S3Client({
+    region: import.meta.env.VITE_PUBLIC_AWS_REGION,
+    credentials: {
+      accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
+      secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
+    },
+  });
+
+  const uploadToS3 = async (file: File): Promise<string> => {
+    if (!formData.width || !formData.height) {
+      toast.error("Please enter valid width and height before uploading.");
+      throw new Error("Width and height must be greater than 0.");
+    }
+
+    const sanitizedFileName = (selectedElement ? selectedElement.id : Date.now().toString()).replace(/\s+/g, "-").toLowerCase();
+    const upload = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
+        Key: `elements/${sanitizedFileName}.jpg`,
+        Body: file,
+        ContentType: file.type,
+      },
+    });
+
+    const result = await upload.done();
+    if (!result.Location) {
+      throw new Error("Upload failed: No URL returned.");
+    }
+
+    setFormData((prev) => ({ ...prev, imageUrl: result.Location! }));
+    return result.Location!;
+  };
 
   const elementsApi = {
     getElements: () => api.get<GetElementsResponse>('/elements'),
     createElement: (data: CreateElementData) => api.post<Element>('/admin/element', data),
-    updateElement: (id: string, data: UpdateElementData) =>
-      api.put<Element>(`/element/${id}`, data),
+    updateElement: (id: string, data: UpdateElementData) => api.put<Element>(`/element/${id}`, data),
     deleteElement: (id: string) => api.delete(`/admin/element/${id}`),
   };
 
@@ -51,52 +93,6 @@ export const CreateElement = () => {
   useEffect(() => {
     fetchElements();
   }, [fetchElements]);
-
-  const handleCreate = async (data: CreateElementData) => {
-    try {
-      setIsSubmitting(true);
-      setError(null);
-      await elementsApi.createElement(data);
-      await fetchElements();
-      setShowFormPopup(false);
-    } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleUpdate = async (data: UpdateElementData) => {
-    if (!selectedElement) return;
-
-    try {
-      setIsSubmitting(true);
-      setError(null);
-      await elementsApi.updateElement(selectedElement.id, data);
-      await fetchElements();
-      setSelectedElement(null);
-      setShowFormPopup(false);
-    } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      await elementsApi.deleteElement(id);
-      await fetchElements();
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (showFormPopup) {
@@ -135,48 +131,34 @@ export const CreateElement = () => {
         )}
 
         {!isLoading && elements.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
             {elements.map((element) => (
               <div
                 key={element.id}
-                className="p-1 flex flex-col items-center justify-start gap-1 drop-shadow-md bg-white rounded-lg cursor-pointer w-max transition-all duration-200 ease-in-out hover:drop-shadow-2xl"
+                className="flex flex-col items-center justify-center p-4 gap-4 drop-shadow-md bg-white rounded-lg cursor-pointer w-full transition-all duration-200 ease-in-out hover:drop-shadow-2xl"
               >
-                <div className="p-4 flex flex-col space-y-2">
-                  <img
-                    src={element.imageUrl}
-                    alt="Element"
-                    className="w-16 h-auto object-cover"
-                  />
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {element.width}x{element.height}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {element.static ? 'Static' : 'Dynamic'}
-                  </p>
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={() => {
-                        setSelectedElement(element);
-                        setShowFormPopup(true);
-                      }}
-                      className="text-purple-600 hover:text-purple-900 bg-white rounded-xl drop-shadow-lg px-5 py-1 active:scale-90 transition-all duration-200 ease-in-out"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(element.id)}
-                      className="text-red-600 hover:text-red-900 bg-white rounded-xl drop-shadow-lg px-5 py-1"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
+                <img
+                  src={element.imageUrl}
+                  alt="Element"
+                  className="w-16 h-auto min-h-16 object-cover shadow-md rounded"
+                />
+                <ul>
+                  <li className='text-sm md:text-base'>Width: {element.width}</li>
+                  <li className='text-sm md:text-base'>Height: {element.height}</li>
+                  <li className='text-sm md:text-base'>Type: {element.static ? 'Static' : 'Dynamic'}</li>
+                </ul>
+                <button
+                  onClick={() => {
+                    setSelectedElement(element);
+                    setShowFormPopup(true);
+                  }}
+                  className="text-[#ffffff] bg-purple-600 hover:bg-purple-700 w-full py-1 text-base rounded-md inline-flex items-center justify-center gap-1 outline-none"><Edit className='w-4 h-4' /> Edit</button>
               </div>
             ))}
           </div>
         )}
 
-        {isLoading && !isSubmitting && (
+        {isLoading && (
           <div className="flex justify-center my-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
           </div>
@@ -190,8 +172,7 @@ export const CreateElement = () => {
 
         {showFormPopup && (
           <div onClick={() => setShowFormPopup(false)} className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-            <div onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-lg shadow-lg w-full max-w-[96%] sm:max-w-md mx-auto overflow-hidden">
+            <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-lg shadow-lg w-full max-w-[96%] sm:max-w-md mx-auto overflow-hidden">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold text-gray-900">
@@ -201,44 +182,74 @@ export const CreateElement = () => {
                     onClick={() => setShowFormPopup(false)}
                     className="text-gray-400 hover:text-gray-500"
                   >
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <X className="h-6 w-6" />
                   </button>
                 </div>
-                <ElementForm
-                  initialData={selectedElement || undefined}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-expect-error
-                  onSubmit={selectedElement ? handleUpdate : handleCreate}
-                  isEdit={!!selectedElement}
-                  isLoading={isSubmitting}
-                />
+                <div className="space-y-6">
+                  {!selectedElement && (
+                    <>
+                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <TextInput
+                          type="number"
+                          id="width"
+                          value={formData.width}
+                          onChange={(e) => setFormData({ ...formData, width: Number(e.target.value) })}
+                          required
+                          min="1"
+                          label='Width'
+                        />
+
+                        <TextInput
+                          type="number"
+                          id="height"
+                          value={formData.height}
+                          onChange={(e) => setFormData({ ...formData, height: Number(e.target.value) })}
+                          required
+                          min="1"
+                          label='Height'
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="static"
+                          checked={formData.static}
+                          onChange={(e) => setFormData({ ...formData, static: e.target.checked })}
+                          className="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                        />
+                        <label htmlFor="static" className="ml-2 block text-md text-gray-700 select-none cursor-pointer">
+                          Static Element
+                        </label>
+                      </div>
+                    </>
+                  )}
+                  <ImageUploader
+                    onUpload={uploadToS3}
+                    onUploadComplete={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
+                    acceptTypes={["image/png", "image/jpeg"]}
+                    maxSize={5}
+                    label="Upload Image"
+                    preview
+                  />
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="sticky bottom-0 p-2 flex items-center justify-center sm:hidden">
-          <Button
-            onClick={() => {
-              setSelectedElement(null);
-              setShowFormPopup(true);
-            }}
-            label='Create New Element'
-            className="w-full shadow-lg drop-shadow-lg mt-10"
-          />
-        </div>
+        {!showFormPopup && (
+          <div className="sticky bottom-0 p-2 flex items-center justify-center sm:hidden">
+            <Button
+              onClick={() => {
+                setSelectedElement(null);
+                setShowFormPopup(true);
+              }}
+              label='Create New Element'
+              className="w-full shadow-lg drop-shadow-lg mt-10"
+              icon={<Plus className='w-5' />}
+            />
+          </div>
+        )}
       </Section>
     </PageWrapper >
   );

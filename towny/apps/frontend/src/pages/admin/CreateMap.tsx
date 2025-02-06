@@ -105,7 +105,6 @@ export const CreateMap = () => {
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-purple-600">Create New Map</h2>
           </div>
-
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">

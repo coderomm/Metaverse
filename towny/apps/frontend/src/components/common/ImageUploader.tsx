@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import { Upload } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -86,8 +87,8 @@ export function ImageUploader({
 
       {preview && previewUrl && <img src={previewUrl} alt="Preview" className="w-32 h-32 rounded-lg mx-auto" />}
 
-      <button onClick={uploadFile} disabled={uploading} className="bg-purple-500 text-white py-2 px-4 rounded w-full">
-        {uploading ? `Uploading ${progress}%` : label}
+      <button onClick={uploadFile} disabled={uploading} className="bg-purple-500 text-white py-2 px-4 rounded w-full flex items-center justify-center gap-3">
+        <Upload className="w-5 h-auto" />{uploading ? `Uploading ${progress}%` : label}
       </button>
     </div>
   );

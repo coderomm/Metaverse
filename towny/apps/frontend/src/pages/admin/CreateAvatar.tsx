@@ -12,6 +12,7 @@ import Section from '../../components/ui/Section';
 import PageWrapper from '../../components/ui/PageWrapper';
 import { ImageUploader } from '../../components/common/ImageUploader';
 import { TextInput } from '../../components/ui/TextInput';
+import SpinLoader from '../../components/ui/SpinLoader';
 
 export const CreateAvatar = () => {
     const [avatars, setAvatars] = useState<Avatar[]>([]);
@@ -188,13 +189,13 @@ export const CreateAvatar = () => {
                 )}
 
                 {isLoading && !isSubmitting && (
-                    <div className="flex justify-center my-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                    <div className="flex justify-center items-center h-dvh my-8">
+                        <SpinLoader />
                     </div>
                 )}
 
                 {!isLoading && avatars.length > 0 && (
-                    <div className="grid grid-cols-3 lg:grid-cols-8 gap-4">
+                    <div className="mt-8 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
                         <AnimatePresence mode="wait">
                             {avatars.map((avatar, index) => (
                                 <motion.div
@@ -202,14 +203,16 @@ export const CreateAvatar = () => {
                                     initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
                                     animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                                     transition={{ duration: 0.2, delay: index * 0.1 }}
-                                    className="p-1 flex flex-col items-center justify-start gap-1 drop-shadow-md bg-white rounded-lg cursor-pointer w-max transition-all duration-200 ease-in-out hover:drop-shadow-2xl hover:scale-[1.1]">
+                                    className="flex flex-col items-center justify-center p-4 gap-4 shadow-md bg-white rounded-lg cursor-pointer w-full transition-all duration-200 ease-in-out hover:shadow-2xl">
                                     <img
                                         src={avatar.imageUrl}
                                         alt={avatar.name}
-                                        className='w-20 rounded-md md:w-20 lg:w-24 lg:h-auto'
+                                        className="w-16 h-auto min-h-16 object-cover shadow-md rounded"
                                         loading='lazy'
                                     />
-                                    <h4 className='text-base md:text-lg'>{avatar.name}</h4>
+                                    <ul>
+                                        <li className='text-sm md:text-base'>Width: {avatar.name}</li>
+                                    </ul>
                                 </motion.div>
                             ))}
                         </AnimatePresence>
@@ -222,7 +225,7 @@ export const CreateAvatar = () => {
                     </div>
                 )}
 
-                {!showCreateForm && (
+                {!showCreateForm && !isLoading && (
                     <div className="sticky bottom-0 p-2 flex items-center justify-center sm:hidden">
                         <Button onClick={() => setShowCreateForm(true)}
                             label='Create New Avatar'
