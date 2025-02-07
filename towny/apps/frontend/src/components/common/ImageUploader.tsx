@@ -79,15 +79,15 @@ export function ImageUploader({
     <div className={`space-y-4 ${className}`}>
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer ${isDragActive ? "border-purple-500 bg-purple-50" : "border-gray-300"}`}
+        className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer ${isDragActive ? "border-primary bg-primary" : "border-gray-300"}`}
       >
         <input {...getInputProps()} />
-        {isDragActive ? <p className="text-purple-500">Drop the image here...</p> : <p>Drag & drop an image, or click to select</p>}
+        {isDragActive ? <p className="text-primary">Drop the image here...</p> : <p>Drag & drop an image, or click to select</p>}
       </div>
 
       {preview && previewUrl && <img src={previewUrl} alt="Preview" className="w-32 h-32 rounded-lg mx-auto" />}
 
-      <button onClick={uploadFile} disabled={uploading} className="bg-purple-500 text-white py-2 px-4 rounded w-full flex items-center justify-center gap-3">
+      <button onClick={uploadFile} disabled={uploading} className="bg-primary text-white py-2 px-4 rounded w-full flex items-center justify-center gap-3">
         <Upload className="w-5 h-auto" />{uploading ? `Uploading ${progress}%` : label}
       </button>
     </div>

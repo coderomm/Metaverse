@@ -50,7 +50,7 @@ export const SignupPage = () => {
       <div className="max-w-md w-full py-12 px-5 bg-white rounded-xl flex flex-col gap-[10px] items-center authcard">
         <h2 className="text-center text-2xl lg:text-4xl font-bold text-[#6758ff] mb-10">Towny</h2>
         {error && <div className="text-red-600 text-center">{error}</div>}
-        <button onClick={handleGoogleLogin} className='cursor-pointer rounded-[8px] py-[10px] px-[16px] select-none w-full h-[40px] md:h-[48px] border-2 border-solid !border-purple-500 hover:bg-gray-50 flex items-center justify-center'>
+        <button onClick={handleGoogleLogin} className='cursor-pointer rounded-[8px] py-[10px] px-[16px] select-none w-full h-[40px] md:h-[48px] border-2 border-solid !border-primary hover:bg-gray-50 flex items-center justify-center'>
           <div className="flex items-center justify-center gap-[6px]">
             <img className="w-[16px] h-[16px] md:w-[18px] md:h-[18px]" src={googleSymbol} alt="google" />
             <span className="text-body-1 text-gray-700 text-center font-semibold leading-[140%] md:text-subtitle truncate">Sign in with Google</span>

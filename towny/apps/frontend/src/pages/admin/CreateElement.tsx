@@ -151,7 +151,7 @@ export const CreateElement = () => {
                     setSelectedElement(element);
                     setShowFormPopup(true);
                   }}
-                  className="text-[#ffffff] bg-purple-600 hover:bg-purple-700 w-full py-1 text-base rounded-md inline-flex items-center justify-center gap-1 outline-none"><Edit className='w-4 h-4' /> Edit</button>
+                  className="text-[#ffffff] bg-primary hover:bg-primary w-full py-1 text-base rounded-md inline-flex items-center justify-center gap-1 outline-none"><Edit className='w-4 h-4' /> Edit</button>
               </div>
             ))}
           </div>
@@ -159,7 +159,7 @@ export const CreateElement = () => {
 
         {isLoading && (
           <div className="flex justify-center my-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         )}
 
@@ -214,7 +214,7 @@ export const CreateElement = () => {
                           id="static"
                           checked={formData.static}
                           onChange={(e) => setFormData({ ...formData, static: e.target.checked })}
-                          className="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                          className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                         />
                         <label htmlFor="static" className="ml-2 block text-md text-gray-700 select-none cursor-pointer">
                           Static Element

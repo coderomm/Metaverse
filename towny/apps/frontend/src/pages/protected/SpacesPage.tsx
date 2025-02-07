@@ -137,7 +137,7 @@ export const SpacesPage = () => {
   return (
     <PageWrapper>
       <Section className='pt-0'>
-        <h1 className="text-4xl font-bold tracking-tight text-purple-600 sm:text-5xl lg:text-6xl">
+        <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
           Welcome to Your Towny Space
         </h1>
         <p className="mt-4 text-xl text-gray-600">
@@ -186,7 +186,7 @@ export const SpacesPage = () => {
                   className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] hidden sm:inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-[14px] font-semibold h-[40px] w-max gap-1 rounded-lg px-3'
                 ><LogIn className="w-5 h-5" />Enter with Code</button>
                 <button onClick={() => setCreateDialogOpen(true)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white hidden sm:inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-[14px] font-semibold h-[40px] w-max gap-1 rounded-lg px-3"
+                  className="bg-primary hover:bg-primary text-white hidden sm:inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-[14px] font-semibold h-[40px] w-max gap-1 rounded-lg px-3"
                 ><Plus className="w-5 h-5" />Create Space</button>
               </div>
             </div>
@@ -204,14 +204,14 @@ export const SpacesPage = () => {
 
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-7">
             {filteredSpaces.length === 0 ? (
               <div className="col-span-2 lg:col-span-3 flex flex-col items-center justify-center h-64 text-center mt-8">
-                <div className="bg-purple-100 rounded-full p-4 mb-4 hidden">
-                  <Plus className="w-8 h-8 text-purple-600" />
+                <div className="bg-primary rounded-full p-4 mb-4 hidden">
+                  <Plus className="w-8 h-8 text-primary" />
                 </div>
                 <img src={StandingChar} className="max-w-full w-40 h-auto" />
                 <h3 className="text-lg xl:text-xl font-semibold mb-1 mt-3">
@@ -266,7 +266,7 @@ export const SpacesPage = () => {
           className='bg-[#f3f2ff] hover:bg-[#e9e8ff] text-[#6758ff] inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-base font-semibold h-[48px] w-full gap-1 rounded-lg'
         ><LogIn className="w-5 h-5" />Enter with Code</button>
         <button onClick={() => setCreateDialogOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-base font-semibold h-[48px] w-full gap-1 rounded-lg"
+          className="bg-primary hover:bg-primary text-white inline-flex justify-center items-center overflow-hidden whitespace-nowrap align-middle text-base font-semibold h-[48px] w-full gap-1 rounded-lg"
         ><Plus className="w-5 h-5" />Create Space</button>
       </section>
     </PageWrapper>

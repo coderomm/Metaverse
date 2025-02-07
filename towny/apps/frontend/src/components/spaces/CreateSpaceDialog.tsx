@@ -136,7 +136,7 @@ export const CreateSpaceDialog = ({
                 {step === 'select-map' ? (
                     <div>
                         <div className="flex gap-4 mb-6 overflow-x-auto py-2">
-                            <button className="px-4 py-2 rounded-full bg-purple-600 text-white">
+                            <button className="px-4 py-2 rounded-full bg-primary text-white">
                                 All
                             </button>
                             <button className="px-4 py-2 rounded-full border hover:bg-gray-50">
@@ -158,11 +158,11 @@ export const CreateSpaceDialog = ({
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
                                 <div
                                     onClick={() => setStep('configure-space')}
-                                    className="cursor-pointer group relative rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-purple-500 flex items-center justify-center aspect-video"
+                                    className="cursor-pointer group relative rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-primary flex items-center justify-center aspect-video"
                                 >
                                     <div className="text-center p-4">
-                                        <Plus className="w-8 h-8 mx-auto mb-2 text-gray-400 group-hover:text-purple-500" />
-                                        <p className="text-gray-600 group-hover:text-purple-500">Create Empty Space</p>
+                                        <Plus className="w-8 h-8 mx-auto mb-2 text-gray-400 group-hover:text-primary" />
+                                        <p className="text-gray-600 group-hover:text-primary">Create Empty Space</p>
                                     </div>
                                 </div>
                                 {maps.map((map) => (
@@ -197,7 +197,7 @@ export const CreateSpaceDialog = ({
                                 value={spaceName}
                                 onChange={(e) => setSpaceName(e.target.value)}
                                 maxLength={30}
-                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="Enter space name"
                             />
                             <p className="text-sm text-gray-500 mt-1">{spaceName.length}/30</p>
@@ -215,7 +215,7 @@ export const CreateSpaceDialog = ({
                                         onChange={(e) => setDimensions(prev => ({ ...prev, width: e.target.value }))}
                                         min="1"
                                         max="9999"
-                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                         placeholder="Enter width"
                                     />
                                 </div>
@@ -229,7 +229,7 @@ export const CreateSpaceDialog = ({
                                         onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
                                         min="1"
                                         max="9999"
-                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                         placeholder="Enter height"
                                     />
                                 </div>
@@ -248,7 +248,7 @@ export const CreateSpaceDialog = ({
                                         onChange={(e) => setIsPublic(e.target.checked)}
                                         className="sr-only peer"
                                     />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                 </label>
                                 <span className="ml-3 text-sm font-medium text-gray-900">Public</span>
                             </div>
@@ -263,7 +263,7 @@ export const CreateSpaceDialog = ({
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                     placeholder="Set password"
                                 />
                             </div>
@@ -282,7 +282,7 @@ export const CreateSpaceDialog = ({
                             <button
                                 onClick={handleCreateSpace}
                                 disabled={!spaceName || (!selectedMap && !validateDimensions())}
-                                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 Create
                             </button>

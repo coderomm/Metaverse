@@ -23,7 +23,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         }
         <input
           {...(id && { id })}
-          className={`w-full py-1 px-2 md:px-4 md:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition 
+          className={`w-full py-1 px-2 md:px-4 md:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition 
           ${error ? 'border-red-500' : ''} ${className}`}
           {...props}
         />

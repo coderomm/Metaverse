@@ -83,7 +83,7 @@ export const JoinSpaceDialog = ({
                             value={spaceId}
                             onChange={(e) => handleSpaceId(e.target.value)}
                             maxLength={30}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                             placeholder="Enter space name"
                         />
                     </div>
@@ -92,7 +92,7 @@ export const JoinSpaceDialog = ({
                         <button
                             onClick={handleSpaceJoin}
                             disabled={!spaceId || loading || !enable}
-                            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full"
+                            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full"
                         >
                             {loading ? 'Checking...' : 'Join'}
                         </button>
@@ -112,7 +112,7 @@ export const JoinSpaceDialog = ({
                                 <div className="flex justify-end gap-4">
                                     <button
                                         onClick={handleInvalidConfirm}
-                                        className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors w-full"
+                                        className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary transition-colors w-full"
                                     >Confirm</button>
                                 </div>
                             </div>

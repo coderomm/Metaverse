@@ -38,7 +38,7 @@ export const Navbar: React.FC = () => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="sticky wrapper top-0 z-50 flex items-center gap-2 px-4 py-2 md:px-12 md:py-0 md:mt-4 w-full mx-auto">
       <div className="flex max-w-7xl w-full justify-between mx-auto bg-[#f3f4f626] shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-[#1118271a] p-3 md:p-5 rounded-2xl">
-        <Link to={user?.email ? '/home/spaces' : '/'} className="flex items-center justify-start text-purple-500 text-3xl md:text-4xl font-bold m-0">Towny</Link>
+        <Link to={user?.email ? '/home/spaces' : '/'} className="flex items-center justify-start text-primary text-3xl md:text-4xl font-bold m-0">Towny</Link>
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
                 }}
               >
                 <button className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-3 py-2">
-                  <img src={user?.imageUrl} className="w-10 h-10 rounded-full shadow-2xl shadow-purple-500" alt="User" />
+                  <img src={user?.imageUrl} className="w-10 h-10 rounded-full shadow-2xl shadow-primary" alt="User" />
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -64,7 +64,7 @@ export const Navbar: React.FC = () => {
                       lg:group-hover:block transition-all duration-200 ease-in-out`}
                 >
                   <div className="px-4 py-2 border-b">
-                    <p className="text-base text-purple-500">{user?.email} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
+                    <p className="text-base text-primary">{user?.email} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
                   </div>
                   {user?.role === "Admin" && (
                     <>

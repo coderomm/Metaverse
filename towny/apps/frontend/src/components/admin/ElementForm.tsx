@@ -82,7 +82,7 @@ export function ElementForm({
             id="static"
             checked={formData.static}
             onChange={(e) => setFormData({ ...formData, static: e.target.checked })}
-            className="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+            className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
           />
           <label htmlFor="static" className="ml-2 block text-md text-gray-700 select-none cursor-pointer">
             Static Element
@@ -104,7 +104,7 @@ export function ElementForm({
         <button
           type="submit"
           disabled={isLoading}
-          className="inline-flex justify-center rounded-md border border-transparent bg-purple-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50"
+          className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
         >
           {isLoading ? (
             <span className="flex items-center">

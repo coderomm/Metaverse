@@ -5,6 +5,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   loadingLabel?: string;
   icon?: React.ReactNode;
+  variant?: "primary" | "secondary";
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -14,16 +15,25 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
   className = "",
   children,
+  variant = "primary",
   ...props
 }) => {
+  const variants = {
+    primary: "bg-primary hover:bg-primary-hover text-primary-btn-text focus:primary",
+    secondary: "bg-secondary hover:bg-secondary-hover text-secondary-btn-text focus:secondary",
+  };
+  const loadingStyles = {
+    base: "cursor-not-allowed",
+    primary: "bg-gray-400 text-gray-700",
+    secondary: "bg-gray-300 text-gray-500 border-gray-300",
+  };
   return (
     <button
       disabled={loading || props.disabled}
-      className={`text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition duration-200 flex items-center justify-center h-[40px]
-      ${loading || props.disabled
-          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-          : "bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-500"
-        } ${className}`}
+      className={`text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 w-full py-2 px-4 rounded-md transition duration-200 flex items-center justify-center h-[40px]
+       ${loading || props.disabled ? loadingStyles[variant] : variants[variant]} 
+        ${loading ? loadingStyles.base : ""}
+        ${className}`}
       {...props}
     >
       {loading ? (

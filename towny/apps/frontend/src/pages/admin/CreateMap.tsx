@@ -151,7 +151,7 @@ export const CreateMap = () => {
       <Section className='pt-0'>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-purple-600">Create New Map</h2>
+            <h2 className="text-2xl font-bold text-primary">Create New Map</h2>
           </div>
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -193,7 +193,7 @@ export const CreateMap = () => {
                           elementId: e.target.value,
                         }))
                       }
-                      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                     >
                       <option value="">Select Element</option>
                       {availableElements.map(element => (

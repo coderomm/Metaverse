@@ -45,7 +45,7 @@ export const LandingPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center my-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     )
   }
@@ -64,7 +64,7 @@ export const LandingPage: React.FC = () => {
         <motion.h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl" variants={itemVariants}>
           Easy and Fun Metaverse,{" "}
           <motion.span
-            className="text-purple-500"
+            className="text-primary"
             whileHover={{
               scale: 1.05,
               transition: { duration: 0.2 },
@@ -93,14 +93,14 @@ export const LandingPage: React.FC = () => {
         </motion.div>
         <motion.div className="mt-10 flex justify-center gap-4" variants={itemVariants}>
           <motion.button
-            className="rounded-full bg-purple-600 px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-purple-700"
+            className="rounded-full bg-primary px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-primary"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             Get Started
           </motion.button>
           <motion.button
-            className="rounded-full border-2 border-purple-600 px-4 py-1 md:px-8 md:py-3 text-purple-600 shadow-lg hover:bg-purple-50"
+            className="rounded-full border-2 border-primary px-4 py-1 md:px-8 md:py-3 text-primary shadow-lg hover:bg-primary"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

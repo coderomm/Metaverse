@@ -284,7 +284,7 @@ const PlayPage = () => {
                     </div>
                     <div className="p-4">
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="w-8 h-8 bg-purple-600 rounded-full" />
+                            <div className="w-8 h-8 bg-primary rounded-full" />
                             <span className="font-medium">You</span>
                         </div>
                         {Array.from(users.values()).map((user) => (
@@ -312,8 +312,8 @@ const PlayPage = () => {
                         </button>
                     </div>
                     <div className="flex items-center justify-start gap-2 px-4 py-2 border-b">
-                        <img src={user?.imageUrl} className="w-10 h-10 rounded-full shadow-2xl shadow-purple-500" alt="User" />
-                        <p className="text-base text-purple-500">{user?.email} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
+                        <img src={user?.imageUrl} className="w-10 h-10 rounded-full shadow-2xl shadow-primary" alt="User" />
+                        <p className="text-base text-primary">{user?.email} | <span className='text-gray-950'>{user?.role === 'Admin' ? user.role : ''}</span></p>
                     </div>
                     <button
                         onClick={() => navigate('/home/spaces')}

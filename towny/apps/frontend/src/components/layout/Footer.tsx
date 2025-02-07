@@ -10,12 +10,12 @@ export const Footer = () => {
             <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Product</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <Link to="/features" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/features" className="text-base text-gray-600 hover:text-primary">
                   Features
                 </Link>
               </li>
               <li>
-                <Link to="/pricing" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/pricing" className="text-base text-gray-600 hover:text-primary">
                   Pricing
                 </Link>
               </li>
@@ -25,12 +25,12 @@ export const Footer = () => {
             <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Support</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <Link to="/documentation" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/documentation" className="text-base text-gray-600 hover:text-primary">
                   Documentation
                 </Link>
               </li>
               <li>
-                <Link to="/guides" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/guides" className="text-base text-gray-600 hover:text-primary">
                   Guides
                 </Link>
               </li>
@@ -40,12 +40,12 @@ export const Footer = () => {
             <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Company</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <Link to="/about" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/about" className="text-base text-gray-600 hover:text-primary">
                   About
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/blog" className="text-base text-gray-600 hover:text-primary">
                   Blog
                 </Link>
               </li>
@@ -55,12 +55,12 @@ export const Footer = () => {
             <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Legal</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <Link to="/privacy" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/privacy" className="text-base text-gray-600 hover:text-primary">
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-base text-gray-600 hover:text-purple-600">
+                <Link to="/terms" className="text-base text-gray-600 hover:text-primary">
                   Terms
                 </Link>
               </li>

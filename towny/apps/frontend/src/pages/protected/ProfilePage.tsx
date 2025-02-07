@@ -118,7 +118,7 @@ export const ProfilePage = () => {
                         <p className='text-gray-700 font-medium text-[14px] w-2/3'>Select an avatar to represent you in the Towny community.</p>
                         <button
                             onClick={handleSortToggle}
-                            className='flex items-center justify-center gap-1 text-white rounded px-5 py-1 font-medium text-base bg-purple-600 hover:bg-purple-500 transition-all duration-200 ease-in-out active:scale-95'
+                            className='flex items-center justify-center gap-1 text-white rounded px-5 py-1 font-medium text-base bg-primary hover:bg-primary transition-all duration-200 ease-in-out active:scale-95'
                         >
                             Sort {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'} 
                             <ArrowDownUp className='w-5 h-5' />
@@ -131,7 +131,7 @@ export const ProfilePage = () => {
                                 key={avatar.id}
                                 onClick={() => setSelectedAvatarId(avatar.id)}
                                 className={`p-1 flex flex-col items-center justify-start gap-1 drop-shadow-md bg-white rounded-lg cursor-pointer w-max transition-all duration-200 ease-in-out hover:drop-shadow-2xl hover:scale-[1.1] border-[2px] ${selectedAvatarId === avatar.id
-                                    ? 'border-purple-500'
+                                    ? 'border-primary'
                                     : 'border-transparent'
                                     }`}
                             >
