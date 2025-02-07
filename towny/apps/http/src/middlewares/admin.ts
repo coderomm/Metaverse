@@ -14,12 +14,13 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
 
     if (!token) {
         res.status(403).json({ message: "Unauthorized" })
-        return
+        return;
     }
 
     if (!process.env.JWT_SECRET) {
         console.error("❌ Missing JWT_SECRET environment variable.");
-        return res.status(500).json({ message: "Internal server error: JWT_SECRET is not configured" });
+        res.status(500).json({ message: "Internal server error: JWT_SECRET is not configured" });
+        return;
     }
 
     try {
@@ -34,11 +35,14 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         console.error("❌ JWT Verification Error:", error.message);
 
         if (error.name === "TokenExpiredError") {
-            return res.status(401).json({ message: "Unauthorized: Token has expired" });
+            res.status(401).json({ message: "Unauthorized: Token has expired" });
+            return;
         } else if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ message: "Unauthorized: Invalid token" });
+            res.status(401).json({ message: "Unauthorized: Invalid token" });
+            return;
         }
 
-        return res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({ message: "Internal server error", error: error.message });
+        return;
     }
 }

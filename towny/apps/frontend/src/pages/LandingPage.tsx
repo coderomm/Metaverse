@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from "framer-motion"
 import PageWrapper from '../components/ui/PageWrapper';
+import bannerImage from '../assets/images/home/landingBanner.png';
 
 export const LandingPage: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -85,7 +86,7 @@ export const LandingPage: React.FC = () => {
           }}
         >
           <img
-            src="https://towny-2d.s3.ap-south-1.amazonaws.com/landingBanner.png"
+            src={bannerImage}
             alt="Landing Banner"
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 80vw"

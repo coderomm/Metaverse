@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { ExternalLink, Loader2, LogIn, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../context/AuthContext';
@@ -7,10 +8,9 @@ import { api } from '../../services/api';
 import Section from '../../components/ui/Section';
 import { CreateSpaceDialog } from '../../components/spaces/CreateSpaceDialog';
 import { JoinSpaceDialog } from '../../components/spaces/JoinSpaceDialog';
-import StandingChar from './../../assets/images/map-templates/banner/full_char.png'
-import dividerGray from './../../assets/images/light/spaceMe/divider_gray.png'
-import searchGray from './../../assets/images/light/spaceMe/search_gray.png'
-import { AxiosError } from 'axios';
+import StandingChar from './../../assets/images/space/full_char.png'
+import dividerGray from './../../assets/images/space/divider_gray.png'
+import searchGray from './../../assets/images/space/search_gray.png'
 import PageWrapper from '../../components/ui/PageWrapper';
 
 interface Space {

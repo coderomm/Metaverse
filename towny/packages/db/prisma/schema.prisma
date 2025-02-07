@@ -86,10 +86,10 @@ model MapElements {
 }
 
 model Avatar {
-  id       String  @id @unique @default(cuid())
-  imageUrl String?
-  name     String?
-  User     User[]
+  id        String   @id @unique @default(cuid())
+  imageUrl  String?
+  name      String?
+  User      User[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

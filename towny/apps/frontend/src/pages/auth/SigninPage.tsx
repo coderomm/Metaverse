@@ -1,4 +1,3 @@
-// src/pages/auth/SigninPage.tsx
 import { useState } from 'react';
 import { SigninSchema, SigninInput } from '../../utils/types';
 import { authApi } from '../../services/api';
@@ -7,7 +6,7 @@ import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
 import { TextInput } from '../../components/ui/TextInput';
 import { Button } from '../../components/ui/Button';
-import googleSymbol from '../../assets/images/light/signin/google_symbol.png'
+import googleSymbol from '../../assets/images/auth/google_symbol.png'
 
 export const SigninPage = () => {
   const { login } = useAuth();
