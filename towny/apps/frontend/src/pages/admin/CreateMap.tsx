@@ -223,6 +223,7 @@ export const CreateMap = () => {
                     onClick={addElement}
                     label='Add Element'
                     icon={<Plus className="w-4 h-4" />}
+                    className='w-max'
                   />
 
                   <div className="space-y-2">
@@ -249,6 +250,7 @@ export const CreateMap = () => {
                 loadingLabel='Creating Map...'
                 label='Create Map'
                 icon={<Upload className="w-4 h-4 mr-2" />}
+                className='w-max'
               />
             </form>
           </div>

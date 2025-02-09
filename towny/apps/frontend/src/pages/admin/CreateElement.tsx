@@ -151,7 +151,7 @@ export const CreateElement = () => {
                     setSelectedElement(element);
                     setShowFormPopup(true);
                   }}
-                  className="text-[#ffffff] bg-primary hover:bg-primary w-full py-1 text-base rounded-md inline-flex items-center justify-center gap-1 outline-none"><Edit className='w-4 h-4' /> Edit</button>
+                  className="text-[#ffffff] bg-primary hover:bg-primary-hover w-full py-1 text-base rounded-md inline-flex items-center justify-center gap-1 outline-none"><Edit className='w-4 h-4' /> Edit</button>
               </div>
             ))}
           </div>

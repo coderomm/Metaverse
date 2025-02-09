@@ -94,14 +94,14 @@ export const LandingPage: React.FC = () => {
         </motion.div>
         <motion.div className="mt-10 flex justify-center gap-4" variants={itemVariants}>
           <motion.button
-            className="rounded-full bg-primary px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-primary"
+            className="rounded-full bg-primary px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-white hover:text-primary hover:border-2 hover:border-primary"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             Get Started
           </motion.button>
           <motion.button
-            className="rounded-full border-2 border-primary px-4 py-1 md:px-8 md:py-3 text-primary shadow-lg hover:bg-primary"
+            className="rounded-full border-2 border-primary px-4 py-1 md:px-8 md:py-3 text-primary shadow-lg hover:bg-primary hover:text-white"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
