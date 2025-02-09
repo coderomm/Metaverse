@@ -15,7 +15,7 @@ const AuthCallback: React.FC = () => {
     const validateToken = async (token: string) => {
         try {
             const response = await api.post('/auth/validate-token', { token });
-            login(response.data.token, response.data.user);
+            login(token, response.data.user);
             toast.info('Google Authentication complete!')
             navigate('/home/spaces');
         } catch (err) {
