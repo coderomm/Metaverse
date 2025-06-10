@@ -1,9 +1,9 @@
-import client from '@repo/db/client';
+import client from '../client';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { hash } from "./scrypt";
 import { generateRandomPassword } from './generateRandomPassword';
-import generateAvatar from '@repo/avatar-generate/generateAvatar';
+import generateAvatar from '../utils/avatar';
 
 export class GoogleAuthService {
     private oauth2Client: OAuth2Client;

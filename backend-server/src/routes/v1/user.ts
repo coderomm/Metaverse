@@ -1,5 +1,5 @@
 import { Router } from "express";
-import client from "@repo/db/client";
+import client from "../../client";
 import { userMiddleware } from "../../middlewares/user";
 import { UpdateMetadataSchema } from "../../schema-types";
 

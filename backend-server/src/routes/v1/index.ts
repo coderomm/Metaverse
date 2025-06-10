@@ -4,10 +4,11 @@ import { userRouter } from "./user";
 import { spaceRouter } from "./space";
 import { adminRouter } from "./admin";
 import { compare, hash } from "../../utils/scrypt";
-import client from "@repo/db/client";
+import client from "../../client";
 import { SignupSchema, SigninSchema } from '../../schema-types';
 import jwt from "jsonwebtoken";
-import generateAvatar from '@repo/avatar-generate/generateAvatar'
+import generateAvatar from '../../utils/avatar'
+// import generateAvatar from '@repo/avatar-generate/generateAvatar'
 import rateLimit from "express-rate-limit";
 import { authRouter } from './auth';
 

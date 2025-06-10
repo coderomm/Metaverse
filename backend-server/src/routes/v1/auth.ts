@@ -1,4 +1,4 @@
-import client from '@repo/db/client';
+import client from "../../client";
 import jwt from 'jsonwebtoken';
 import { Router } from 'express';
 import { GoogleAuthService } from '../../utils/google';

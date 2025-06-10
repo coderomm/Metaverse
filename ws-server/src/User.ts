@@ -1,4 +1,4 @@
-import client from '@repo/db/client';
+import client from './client';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { WebSocket } from "ws";
 import { RoomManager } from './RoomManager';
