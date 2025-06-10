@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SigninSchema, SigninInput } from '../../utils/types';
+import { SigninSchema, type SigninInput } from '../../utils/types';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { AxiosError } from 'axios';

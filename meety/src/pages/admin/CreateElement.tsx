@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Element, CreateElementData, UpdateElementData, GetElementsResponse } from '../../utils/types';
+import type { Element, CreateElementData, UpdateElementData, GetElementsResponse } from '../../utils/types';
 import { api } from '../../services/api';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';

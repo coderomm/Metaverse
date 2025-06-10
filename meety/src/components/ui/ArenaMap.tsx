@@ -1,5 +1,5 @@
 import React from 'react';
-import { Position, UserRes } from '../../utils/types';
+import type { Position, UserRes } from '../../utils/types';
 import { useViewport } from '../../hooks/useViewport';
 import { TILE_SIZE } from '../../utils/constants';
 import { ArenaAvatar } from './ArenaAvatar';

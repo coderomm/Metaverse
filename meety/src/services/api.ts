@@ -1,7 +1,7 @@
 // src/services/api.ts
 import axios, { AxiosError } from 'axios';
-import { SignupInput, SigninInput } from '../utils/types';
 import { toast } from 'sonner';
+import type { SigninInput, SignupInput } from '../utils/types';
 
 const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api/v1`;
 

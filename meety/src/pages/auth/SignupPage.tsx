@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { authApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { SignupInput, SignupSchema } from '../../utils/types';
 import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
 import { TextInput } from '../../components/ui/TextInput';
 import { SelectInput } from '../../components/ui/SelectInput';
 import { Button } from '../../components/ui/Button';
 import googleSymbol from '../../assets/images/auth/google_symbol.png'
+import { SignupSchema, type SignupInput } from '../../utils/types';
 
 export const SignupPage = () => {
   const { login } = useAuth();

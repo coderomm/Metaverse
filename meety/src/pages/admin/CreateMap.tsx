@@ -1,9 +1,9 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Upload, Plus, X, } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
-import { MapCreateFormData, MapElement } from '../../utils/types';
+import type { MapCreateFormData, MapElement } from '../../utils/types';
 import Section from '../../components/ui/Section';
 import PageWrapper from '../../components/ui/PageWrapper';
 import { TextInput } from '../../components/ui/TextInput';

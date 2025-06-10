@@ -1,4 +1,4 @@
-import './global.css'
+import './index.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';

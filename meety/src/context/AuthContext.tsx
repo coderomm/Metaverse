@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api';
-import { User } from '../utils/types';
+import { type User } from '../utils/types';
 import { toast } from 'sonner';
 import SpinLoader from '../components/ui/SpinLoader';
 

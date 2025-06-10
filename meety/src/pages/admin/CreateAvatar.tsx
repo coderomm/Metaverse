@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AxiosError } from 'axios';
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { Avatar, CreateAvatarData, GetAvatarsResponse } from '../../utils/types';
+import type { Avatar, CreateAvatarData, GetAvatarsResponse } from '../../utils/types';
 import { api } from '../../services/api';
 import { Button } from '../../components/ui/Button';
 import Section from '../../components/ui/Section';

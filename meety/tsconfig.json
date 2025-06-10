@@ -3,5 +3,9 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "rootDir": "./src",                                  /* Specify the root folder within your source files. */
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+  }
 }
