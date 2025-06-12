@@ -67,7 +67,7 @@ const PlayPage = () => {
     }, []);
 
     const initializeWebSocket = useCallback((spaceId: string, token: string) => {
-        const socket = new WebSocket('ws://localhost:3001');
+        const socket = new WebSocket(import.meta.env.VITE_WS_URL);
 
         socket.onopen = () => {
             socket.send(JSON.stringify({
