@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from "framer-motion"
 import PageWrapper from '../components/ui/PageWrapper';
@@ -93,20 +93,24 @@ export const LandingPage: React.FC = () => {
           />
         </motion.div>
         <motion.div className="mt-10 flex justify-center gap-4" variants={itemVariants}>
-          <motion.button
-            className="rounded-full bg-primary px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-white hover:text-primary hover:border-2 hover:border-primary"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Get Started
-          </motion.button>
-          <motion.button
-            className="rounded-full border-2 border-primary px-4 py-1 md:px-8 md:py-3 text-primary shadow-lg hover:bg-primary hover:text-white"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Learn More
-          </motion.button>
+          <Link className='cursor-pointer' to="/accounts/signin">
+            <motion.button
+              className="rounded-full bg-primary px-4 py-1 md:px-8 md:py-3 text-white shadow-lg hover:bg-white hover:text-primary hover:border-2 hover:border-primary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Get Started
+            </motion.button>
+          </Link>
+          <Link className='cursor-pointer' to="/accounts/signup">
+            <motion.button
+              className="rounded-full border-2 border-primary px-4 py-1 md:px-8 md:py-3 text-primary shadow-lg hover:bg-primary hover:text-white"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Learn More
+            </motion.button>
+          </Link>
         </motion.div>
       </motion.div>
     </PageWrapper>
