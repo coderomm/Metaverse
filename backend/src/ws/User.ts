@@ -1,9 +1,8 @@
-import client from './client';
+import client from '../client';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { WebSocket } from "ws";
 import { RoomManager } from './RoomManager';
-
-type OutgoingMessage = any;
+import { OutgoingMessage } from '../utils/types';
 
 function getRandomString(l: number) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
