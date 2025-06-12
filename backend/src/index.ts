@@ -42,8 +42,12 @@ wss.on('connection', (ws) => {
     });
 });
 
+app.get('/', (req, res) => {
+  res.send('✅ Towny backend is up and running!');
+});
+
 app.use('/api/v1', router);
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running with REST and WS on http://localhost:${PORT}`);
+    console.log(`🚀 Server running with REST and WS on PORT:${PORT}`);
 });
