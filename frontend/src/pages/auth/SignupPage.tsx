@@ -77,8 +77,9 @@ export const SignupPage = () => {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
           </div>
-          <div className='hidden'>
+          <div className='w-full'>
             <SelectInput
+              className='w-full'
               label="User Role"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value as "User" | "Admin" })}

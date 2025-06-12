@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AxiosError } from 'axios';
-import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client } from "@aws-sdk/client-s3";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,6 +11,7 @@ import PageWrapper from '../../components/ui/PageWrapper';
 import { ImageUploader } from '../../components/common/ImageUploader';
 import { TextInput } from '../../components/ui/TextInput';
 import SpinLoader from '../../components/ui/SpinLoader';
+import { uploadImageToCloudinary } from '../../utils/uploadImageToCloudinary';
 
 export const CreateAvatar = () => {
     const [avatars, setAvatars] = useState<Avatar[]>([]);
@@ -22,37 +21,19 @@ export const CreateAvatar = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState<CreateAvatarData>({ name: '', imageUrl: '', });
 
-    const s3Client = new S3Client({
-        region: import.meta.env.VITE_PUBLIC_AWS_REGION,
-        credentials: {
-            accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
-            secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-        },
-    });
-
-    const uploadToS3 = async (file: File): Promise<string> => {
-        if (!formData.name.trim()) {
-            toast.error("Please enter an image name before uploading.");
-            throw new Error("Image name is required")
-        }
-
-        const sanitizedFileName = formData.name.replace(/\s+/g, "-").toLowerCase();
-        const upload = new Upload({
-            client: s3Client,
-            params: {
-                Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
-                Key: `avatars/${sanitizedFileName}.jpg`,
-                Body: file,
-                ContentType: file.type,
-                ACL: "public-read",
-            },
+    const handleUpload = async (file: File): Promise<string> => {
+        const url = await uploadImageToCloudinary({
+            file,
+            validate: () => {
+                if (!formData.name.trim()) {
+                    toast.error("Image name is required");
+                    throw new Error("Image name is required");
+                }
+            }
         });
 
-        const result = await upload.done();
-        if (!result.Location) {
-            throw new Error("Upload failed: No URL returned");
-        }
-        return result.Location!;
+        setFormData(prev => ({ ...prev, imageUrl: url }));
+        return url;
     };
 
     const fetchElements = useCallback(async () => {
@@ -175,7 +156,7 @@ export const CreateAvatar = () => {
                                     </div>
 
                                     <ImageUploader
-                                        onUpload={uploadToS3}
+                                        onUpload={handleUpload}
                                         onUploadComplete={handleUploadComplete}
                                         acceptTypes={["image/png", "image/jpeg"]}
                                         maxSize={5}

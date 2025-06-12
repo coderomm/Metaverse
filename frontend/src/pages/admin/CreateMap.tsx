@@ -9,8 +9,7 @@ import PageWrapper from '../../components/ui/PageWrapper';
 import { TextInput } from '../../components/ui/TextInput';
 import { Button } from '../../components/ui/Button';
 import { ImageUploader } from '../../components/common/ImageUploader';
-import { S3Client } from "@aws-sdk/client-s3";
-import { Upload as S3Upload } from "@aws-sdk/lib-storage";
+import { uploadImageToCloudinary } from '../../utils/uploadImageToCloudinary';
 
 type ElementData = {
   id: string;
@@ -37,42 +36,19 @@ export const CreateMap = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [availableElements, setAvailableElements] = useState<ElementData[]>([]);
 
-  const s3Client = new S3Client({
-    region: import.meta.env.VITE_PUBLIC_AWS_REGION,
-    credentials: {
-      accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
-      secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-    },
-  });
-
-  const uploadToS3 = async (file: File): Promise<string> => {
-    if (!formData.name.trim() || !formData.dimensions.trim()) {
-      toast.error("Please enter a map name and valid dimensions before uploading.");
-      throw new Error("Name and dimensions must be provided.");
-    }
-
-    const sanitizedFileName = `${Date.now()}-${file.name.replace(/\s+/g, "-").toLowerCase()}`;
-    const upload = new S3Upload({
-      client: s3Client,
-      params: {
-        Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
-        Key: `maps/${sanitizedFileName}`,
-        Body: file,
-        ContentType: file.type,
-      },
+  const handleUpload = async (file: File): Promise<string> => {
+    const url = await uploadImageToCloudinary({
+      file,
+      validate: () => {
+        if (!formData.name.trim() || !formData.dimensions.trim()) {
+          toast.error("Please enter a map name and valid dimensions before uploading.");
+          throw new Error("Name and dimensions must be provided.");
+        }
+      }
     });
 
-    try {
-      const result = await upload.done();
-      if (!result.Location) throw new Error("Upload failed: No URL returned.");
-      setFormData((prev) => ({ ...prev, thumbnail: result.Location! }));
-      return result.Location!;
-    } catch (error) {
-      toast.error("Upload failed. Try again.");
-      throw error;
-    } finally {
-      setFormData((prev) => ({ ...prev, thumbnail: '' }));
-    }
+    setFormData(prev => ({ ...prev, imageUrl: url }));
+    return url;
   };
 
   useEffect(() => {
@@ -174,7 +150,7 @@ export const CreateMap = () => {
                   required
                 />
                 <ImageUploader
-                  onUpload={uploadToS3}
+                  onUpload={handleUpload}
                   onUploadComplete={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
                   acceptTypes={["image/png", "image/jpeg"]}
                   maxSize={5}

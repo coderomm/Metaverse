@@ -9,8 +9,7 @@ import { Edit, Plus, X } from 'lucide-react';
 import PageWrapper from '../../components/ui/PageWrapper';
 import { TextInput } from '../../components/ui/TextInput';
 import { ImageUploader } from "../../components/common/ImageUploader";
-import { S3Client } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
+import { uploadImageToCloudinary } from '../../utils/uploadImageToCloudinary';
 
 export const CreateElement = () => {
   const [elements, setElements] = useState<Element[]>([]);
@@ -25,38 +24,19 @@ export const CreateElement = () => {
     imageUrl: '',
   });
 
-  const s3Client = new S3Client({
-    region: import.meta.env.VITE_PUBLIC_AWS_REGION,
-    credentials: {
-      accessKeyId: import.meta.env.VITE_PUBLIC_AWS_ACCESS_KEY_ID!,
-      secretAccessKey: import.meta.env.VITE_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-    },
-  });
-
-  const uploadToS3 = async (file: File): Promise<string> => {
-    if (!formData.width || !formData.height) {
-      toast.error("Please enter valid width and height before uploading.");
-      throw new Error("Width and height must be greater than 0.");
-    }
-
-    const sanitizedFileName = (selectedElement ? selectedElement.id : Date.now().toString()).replace(/\s+/g, "-").toLowerCase();
-    const upload = new Upload({
-      client: s3Client,
-      params: {
-        Bucket: import.meta.env.VITE_PUBLIC_AWS_BUCKET_NAME,
-        Key: `elements/${sanitizedFileName}.jpg`,
-        Body: file,
-        ContentType: file.type,
-      },
+  const handleUpload = async (file: File): Promise<string> => {
+    const url = await uploadImageToCloudinary({
+      file,
+      validate: () => {
+        if (!formData.width || !formData.height) {
+          toast.error("Please enter valid width and height before uploading.");
+          throw new Error("Width and height must be greater than 0.");
+        }
+      }
     });
 
-    const result = await upload.done();
-    if (!result.Location) {
-      throw new Error("Upload failed: No URL returned.");
-    }
-
-    setFormData((prev) => ({ ...prev, imageUrl: result.Location! }));
-    return result.Location!;
+    setFormData(prev => ({ ...prev, imageUrl: url }));
+    return url;
   };
 
   const elementsApi = {
@@ -223,7 +203,7 @@ export const CreateElement = () => {
                     </>
                   )}
                   <ImageUploader
-                    onUpload={uploadToS3}
+                    onUpload={handleUpload}
                     onUploadComplete={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
                     acceptTypes={["image/png", "image/jpeg"]}
                     maxSize={5}
